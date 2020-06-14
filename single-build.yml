@@ -71,7 +71,7 @@ steps:
   displayName: 'Download ${{ parameters.package }}/${{ parameters.package_version }}@'
   inputs:
     conanCommand: 'Custom'
-    customArguments: 'download ${{ parameters.package }}/${{ parameters.package_version }}@ -remote=${{ parameters.source_repository }} --recipe'
+    customArguments: 'download ${{ parameters.package }}/${{ parameters.package_version }}@ --remote=${{ parameters.source_repository }} --recipe'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
