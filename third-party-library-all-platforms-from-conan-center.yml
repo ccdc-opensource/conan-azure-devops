@@ -24,15 +24,16 @@ parameters:
   - name: platforms
     type: object
     default:
-      - centos7_gcc9
-      - ubuntu2004_gcc10
-      - macos1015_xcode11
-      - win2016_vs2017
-      - win2019_vs2019
+      only:
+        - centos7_gcc9
+        - ubuntu2004_gcc10
+        - macos1015_xcode11
+        - win2016_vs2017
+        - win2019_vs2019
 
 jobs:
   - job: centos7_gcc9
-    condition: containsValue(${{ parameters.platforms }}, centos7_gcc9)
+    condition: containsValue(${{ parameters.platforms.only }}, centos7_gcc9)
     pool:
       vmImage: "ubuntu-latest"
     # We use a container to run the build as we must be compatible with centos7's older glibc
@@ -52,7 +53,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
 
   - job: ubuntu2004_gcc10
-    condition: containsValue(${{ parameters.platforms }}, ubuntu2004_gcc10)
+    condition: containsValue(${{ parameters.platforms.only }}, ubuntu2004_gcc10)
     pool:
       vmImage: "ubuntu-latest"
     # We use a container to run the build as we must be compatible with centos7's older glibc
@@ -72,7 +73,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
 
   - job: macos1015_xcode11
-    condition: containsValue(${{ parameters.platforms }}, macos1015_xcode11)
+    condition: containsValue(${{ parameters.platforms.only }}, macos1015_xcode11)
     pool:
       vmImage: "macOS-latest"
     steps:
@@ -93,7 +94,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
 
   - job: win2016_vs2017
-    condition: containsValue(${{ parameters.platforms }}, win2016_vs2017)
+    condition: containsValue(${{ parameters.platforms.only }}, win2016_vs2017)
     pool:
       vmImage: "vs2017-win2016"
     steps:
@@ -114,7 +115,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
 
   - job: win2019_vs2019
-    condition: containsValue(${{ parameters.platforms }}, win2019_vs2019)
+    condition: containsValue(${{ parameters.platforms.only }}, win2019_vs2019)
     pool:
       vmImage: "windows-2019"
     steps:
