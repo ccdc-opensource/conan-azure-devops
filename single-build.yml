@@ -72,12 +72,12 @@ steps:
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
   - task: ArtifactoryConan@1
-    displayName: 'Build ${{ parameters.package }} in ${{ parameters.build_type }} mode'
+    displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
     inputs:
       conanCommand: 'Install'
       pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@${{ parameters.user }}/${{ parameters.channel }}'
       # We build a single package, on purpose, dependencies must be tracked
-      extraArguments: '--profile ${{ parameters.profile }} --build=${{ parameters.package }} -s build_type=${{ parameters.build_type }}'
+      extraArguments: '--profile ${{ parameters.profile }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
