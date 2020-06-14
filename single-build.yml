@@ -1,10 +1,31 @@
-# Builds a 
-# conan.python
-$(conan.package)/$(conan.package_version) $(conan.user)/$(conan.channel)'
-$(conan.profile)
+parameters:
+  - name: conan.python
+    type: string
+    default: $(conan.python)
+  - name: conan.package
+    type: string
+    default: $(conan.package)
+  - name: conan.package_version
+    type: string
+    default: $(conan.python)
+  - name: conan.user
+    type: string
+    default: $(conan.user)
+  - name: conan.channel
+    type: string
+    default: $(conan.channel)
+  - name: conan.profile
+    type: string
+    default: $(conan.profile)
+  - name: conan.build_types
+    type: object
+    default:
+    - Release
+    - Debug
+    - RelWithDebInfo
 
 steps:
-- script: $(conan.python) -m pip install --upgrade conan
+- script: ${{ parameters.conan.python }} -m pip install --upgrade conan
   displayName: 'Install conan'
 
 - task: ArtifactoryGenericDownload@3
@@ -42,40 +63,40 @@ steps:
     conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - task: ArtifactoryConan@1
-  displayName: 'Install $(conan.package)/$(conan.package_version)@'
+  displayName: 'Install ${{ parameters.conan.package }}/${{ parameters.conan.package_version }}@'
   inputs:
     conanCommand: 'Install'
-    pathOrReference: '$(conan.package)/$(conan.package_version)@'
+    pathOrReference: '${{ parameters.conan.package }}/${{ parameters.conan.package_version }}@'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
     
 - task: ArtifactoryConan@1
-  displayName: 'Copy to $(conan.user)/$(conan.channel)'
+  displayName: 'Copy to ${{ parameters.conan.user }}/${{ parameters.conan.channel }}'
   inputs:
     conanCommand: 'Custom'
-    customArguments: 'copy $(conan.package)/$(conan.package_version) $(conan.user)/$(conan.channel)'
+    customArguments: 'copy ${{ parameters.conan.package }}/${{ parameters.conan.package_version }} ${{ parameters.conan.user }}/${{ parameters.conan.channel }}'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
 
-- ${{ each build_type in conan.build_types }}: # Each build_type
+- ${{ each build_type in parameters.conan.build_types }}: # Each build_type
   - task: ArtifactoryConan@1
-    displayName: 'Build $(conan.package) in $(build_type) mode'
+    displayName: 'Build ${{ parameters.conan.package }} in ${{ parameters.build_type }} mode'
     inputs:
       conanCommand: 'Install'
-      pathOrReference: '$(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+      pathOrReference: '${{ parameters.conan.package }}/${{ parameters.conan.package_version }}@${{ parameters.conan.user }}/${{ parameters.conan.channel }}'
       # We build a single package, on purpose, dependencies must be tracked
-      extraArguments: '--profile $(conan.profile) --build=$(conan.package) -s build_type=$(build_type)'
+      extraArguments: '--profile ${{ parameters.conan.profile }} --build=${{ parameters.conan.package }} -s build_type=${{ parameters.build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - task: ArtifactoryConan@1
-  displayName: 'Upload $(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+  displayName: 'Upload ${{ parameters.conan.package }}/${{ parameters.conan.package_version }}@${{ parameters.conan.user }}/${{ parameters.conan.channel }}'
   inputs:
     conanCommand: 'Upload'
-    patternOrReference: '$(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+    patternOrReference: '${{ parameters.conan.package }}/${{ parameters.conan.package_version }}@${{ parameters.conan.user }}/${{ parameters.conan.channel }}'
     extraArguments: '--all'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
