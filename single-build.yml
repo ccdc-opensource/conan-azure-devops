@@ -52,35 +52,26 @@ steps:
     purgeExistingRemotes: true
     conanUserHome: '$(Pipeline.Workspace)/.conan'
 
-- task: ArtifactoryConan@1
-  displayName: 'Install ${{ parameters.package }}/${{ parameters.package_version }}@'
-  inputs:
-    conanCommand: 'Install'
-    pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
-    buildName: '$(Build.DefinitionName)'
-    buildNumber: '$(Build.BuildNumber)'
-    conanUserHome: '$(Pipeline.Workspace)/.conan'
-    
-- task: ArtifactoryConan@1
-  displayName: 'Copy to ${{ parameters.user }}/${{ parameters.channel }}'
-  inputs:
-    conanCommand: 'Custom'
-    customArguments: 'copy ${{ parameters.package }}/${{ parameters.package_version }} ${{ parameters.user }}/${{ parameters.channel }}'
-    buildName: '$(Build.DefinitionName)'
-    buildNumber: '$(Build.BuildNumber)'
-    conanUserHome: '$(Pipeline.Workspace)/.conan'
-
 - ${{ each build_type in parameters.build_types }}: # Each build_type
   - task: ArtifactoryConan@1
     displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
     inputs:
       conanCommand: 'Install'
-      pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@${{ parameters.user }}/${{ parameters.channel }}'
+      pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
       # We build a single package, on purpose, dependencies must be tracked
       extraArguments: '--profile ${{ parameters.profile }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
+    
+- task: ArtifactoryConan@1
+  displayName: 'Copy to ${{ parameters.user }}/${{ parameters.channel }}'
+  inputs:
+    conanCommand: 'Custom'
+    customArguments: 'copy --all --force ${{ parameters.package }}/${{ parameters.package_version }} ${{ parameters.user }}/${{ parameters.channel }}'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@${{ parameters.user }}/${{ parameters.channel }}'
