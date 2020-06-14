@@ -15,6 +15,12 @@ parameters:
       - Release
       - Debug
       - RelWithDebInfo
+  - name: source_repository
+    type: string
+    default: public-conan-center
+  - name: destination_repository
+    type: string
+    default: ccdc-3rdparty-conan
 
 jobs:
   - job: centos7_gcc9
@@ -33,6 +39,8 @@ jobs:
           channel: ${{ parameters.channel }}
           profile: centos7-gcc9-x86_64
           build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}
 
   - job: ubuntu2004_gcc10
     pool:
@@ -50,6 +58,8 @@ jobs:
           channel: ${{ parameters.channel }}
           profile: ubuntu20-gcc10-x86_64
           build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}
 
   - job: macos1015_xcode11
     pool:
@@ -68,6 +78,8 @@ jobs:
           channel: ${{ parameters.channel }}
           profile: macos-xcode11-x86_64
           build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}
 
   - job: win2016_vs2017
     pool:
@@ -86,6 +98,8 @@ jobs:
           channel: ${{ parameters.channel }}
           profile: windows-msvc15-amd64
           build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}
 
   - job: win2019_vs2019
     pool:
@@ -104,3 +118,5 @@ jobs:
           channel: ${{ parameters.channel }}
           profile: windows-msvc16-amd64
           build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}

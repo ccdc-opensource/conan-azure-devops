@@ -13,6 +13,10 @@ parameters:
     type: string
   - name: build_types
     type: object
+  - name: source_repository
+    type: string
+  - name: destination_repository
+    type: string
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -43,13 +47,33 @@ steps:
     conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - task: ArtifactoryConan@1
-  displayName: 'Use ccdc-3rdparty-conan-mix'
+  displayName: 'Use ${{ parameters.destination_repository }}'
   inputs:
     conanCommand: 'Add Remote'
-    remoteName: 'ccdc-3rdparty-conan-mix'
+    remoteName: '${{ parameters.destination_repository }}'
     artifactoryService: 'devops-ccdc-3rd-party'
-    conanRepo: 'ccdc-3rdparty-conan-mix'
+    conanRepo: '${{ parameters.destination_repository }}'
     purgeExistingRemotes: true
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Use ${{ parameters.source_repository }}'
+  inputs:
+    conanCommand: 'Add Remote'
+    remoteName: '${{ parameters.source_repository }}'
+    artifactoryService: 'devops-ccdc-3rd-party'
+    conanRepo: '${{ parameters.source_repository }}'
+    purgeExistingRemotes: false
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+# Download just this package from the source repository, dependencies must already be built in the destination
+- task: ArtifactoryConan@1
+  displayName: 'Download ${{ parameters.package }}/${{ parameters.package_version }}@'
+  inputs:
+    conanCommand: 'Custom'
+    customArguments: 'download ${{ parameters.package }}/${{ parameters.package_version }}@ -remote=${{ parameters.source_repository }} --recipe'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -59,26 +83,17 @@ steps:
       conanCommand: 'Install'
       pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
       # We build a single package, on purpose, dependencies must be tracked
-      extraArguments: '--profile ${{ parameters.profile }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      extraArguments: '--profile ${{ parameters.profile }} --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
-    
-- task: ArtifactoryConan@1
-  displayName: 'Copy to ${{ parameters.user }}/${{ parameters.channel }}'
-  inputs:
-    conanCommand: 'Custom'
-    customArguments: 'copy --all --force ${{ parameters.package }}/${{ parameters.package_version }} ${{ parameters.user }}/${{ parameters.channel }}'
-    buildName: '$(Build.DefinitionName)'
-    buildNumber: '$(Build.BuildNumber)'
-    conanUserHome: '$(Pipeline.Workspace)/.conan'
 
 - task: ArtifactoryConan@1
-  displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@${{ parameters.user }}/${{ parameters.channel }}'
+  displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
   inputs:
     conanCommand: 'Upload'
-    patternOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@${{ parameters.user }}/${{ parameters.channel }}'
-    extraArguments: '--all'
+    patternOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+    extraArguments: '--all --remote=${{ parameters.destination_repository }}'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
