@@ -1,0 +1,83 @@
+# Builds a 
+# conan.python
+$(conan.package)/$(conan.package_version) $(conan.user)/$(conan.channel)'
+$(conan.profile)
+
+steps:
+- script: $(conan.python) -m pip install --upgrade conan
+  displayName: 'Install conan'
+
+- task: ArtifactoryGenericDownload@3
+  displayName: 'Download configuration'
+  inputs:
+    connection: 'devops-ccdc-3rd-party'
+    specSource: 'taskConfiguration'
+    fileSpec: |
+      {
+        "files": [
+          {
+            "pattern": "ccdc-conan-metadata/common-3rdparty-config.zip",
+            "target": "$(Pipeline.Workspace)/.conan/"
+          }
+        ]
+      }
+    failNoOp: true
+
+- task: ArtifactoryConan@1
+  displayName: 'Install configuration'
+  inputs:
+    conanCommand: 'Config Install'
+    configSourceType: 'zip'
+    configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Use ccdc-3rdparty-conan-mix'
+  inputs:
+    conanCommand: 'Add Remote'
+    remoteName: 'ccdc-3rdparty-conan-mix'
+    artifactoryService: 'devops-ccdc-3rd-party'
+    conanRepo: 'ccdc-3rdparty-conan-mix'
+    purgeExistingRemotes: true
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Install $(conan.package)/$(conan.package_version)@'
+  inputs:
+    conanCommand: 'Install'
+    pathOrReference: '$(conan.package)/$(conan.package_version)@'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+    
+- task: ArtifactoryConan@1
+  displayName: 'Copy to $(conan.user)/$(conan.channel)'
+  inputs:
+    conanCommand: 'Custom'
+    customArguments: 'copy $(conan.package)/$(conan.package_version) $(conan.user)/$(conan.channel)'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- ${{ each build_type in conan.build_types }}: # Each build_type
+  - task: ArtifactoryConan@1
+    displayName: 'Build $(conan.package) in $(build_type) mode'
+    inputs:
+      conanCommand: 'Install'
+      pathOrReference: '$(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+      # We build a single package, on purpose, dependencies must be tracked
+      extraArguments: '--profile $(conan.profile) --build=$(conan.package) -s build_type=$(build_type)'
+      buildName: '$(Build.DefinitionName)'
+      buildNumber: '$(Build.BuildNumber)'
+      conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Upload $(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+  inputs:
+    conanCommand: 'Upload'
+    patternOrReference: '$(conan.package)/$(conan.package_version)@$(conan.user)/$(conan.channel)'
+    extraArguments: '--all'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
