@@ -1,0 +1,124 @@
+parameters:
+  - name: package
+    type: string
+  - name: package_version
+    type: string
+  - name: user
+    type: string
+    default: ccdc
+  - name: channel
+    type: string
+    default: testing
+  - name: build_types
+    type: object
+    default:
+      - Release
+      - Debug
+      - RelWithDebInfo
+
+variables:
+  # We use what is provided by the UsePythonVersion step in general
+  conan.python: 'python'
+
+jobs:
+  - job: centos7_gcc9
+    pool:
+      vmImage: "ubuntu-latest"
+    # We use a container to run the build as we must be compatible with centos7's older glibc
+    container: rockdreamer/centos7-gcc9:latest
+    variables:
+      conan.profile: centos7-gcc9-x86_64
+      # We can't use UsePythonVersion on this VM so we have to be explicit
+      conan.python: 'python3'
+    steps:
+      # No need to setup specific python, the container's python3 will be used
+      - template: single-build.yml@templates
+        parameters:
+          python: $(conan.python)
+          package: ${{ package }}
+          package_version: ${{ package_version }}
+          user: ${{ user }}
+          channel: ${{ channel }}
+          profile: ${{ conan.profile }}
+          build_types: ${{ build_types }}
+
+  - job: ubuntu2004_gcc10
+    pool:
+      vmImage: "ubuntu-latest"
+    # We use a container to run the build as we must be compatible with centos7's older glibc
+    container: rockdreamer/ubuntu20-gcc10:latest
+    variables:
+      conan.profile: ubuntu20-gcc10-x86_64
+      # We can't use UsePythonVersion on this VM so we have to be explicit
+      conan.python: 'python3'
+    steps:
+      # No need to setup specific python, the container's python3 will be used
+      - template: single-build.yml@templates
+        parameters:
+          python: $(conan.python)
+          package: ${{ package }}
+          package_version: ${{ package_version }}
+          user: ${{ user }}
+          channel: ${{ channel }}
+          profile: ${{ conan.profile }}
+          build_types: ${{ build_types }}
+
+  - job: macos1015_xcode11
+    pool:
+      vmImage: "macOS-latest"
+    variables:
+      conan.profile: macos-xcode11-x86_64
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+        displayName: "Use latest python 3.8"
+      - template: single-build.yml@templates
+        parameters:
+          python: $(conan.python)
+          package: ${{ package }}
+          package_version: ${{ package_version }}
+          user: ${{ user }}
+          channel: ${{ channel }}
+          profile: ${{ conan.profile }}
+          build_types: ${{ build_types }}
+
+  - job: win2016_vs2017
+    pool:
+      vmImage: "vs2017-win2016"
+    variables:
+      conan.profile: windows-msvc15-amd64
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+        displayName: "Use latest python 3.8"
+      - template: single-build.yml@templates
+        parameters:
+          python: $(conan.python)
+          package: ${{ package }}
+          package_version: ${{ package_version }}
+          user: ${{ user }}
+          channel: ${{ channel }}
+          profile: ${{ conan.profile }}
+          build_types: ${{ build_types }}
+
+  - job: win2019_vs2019
+    pool:
+      vmImage: "windows-2019"
+    variables:
+      conan.profile: windows-msvc16-amd64
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+        displayName: "Use latest python 3.8"
+      - template: single-build.yml@templates
+        parameters:
+          python: $(conan.python)
+          package: ${{ package }}
+          package_version: ${{ package_version }}
+          user: ${{ user }}
+          channel: ${{ channel }}
+          profile: ${{ conan.profile }}
+          build_types: ${{ build_types }}
