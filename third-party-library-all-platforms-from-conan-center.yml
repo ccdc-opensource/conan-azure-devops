@@ -35,12 +35,12 @@ jobs:
       - template: single-build.yml@templates
         parameters:
           python: $(conan.python)
-          package: ${{ package }}
-          package_version: ${{ package_version }}
-          user: ${{ user }}
-          channel: ${{ channel }}
-          profile: ${{ conan.profile }}
-          build_types: ${{ build_types }}
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: ${{ parameters.conan.profile }}
+          build_types: ${{ parameters.build_types }}
 
   - job: ubuntu2004_gcc10
     pool:
@@ -56,12 +56,12 @@ jobs:
       - template: single-build.yml@templates
         parameters:
           python: $(conan.python)
-          package: ${{ package }}
-          package_version: ${{ package_version }}
-          user: ${{ user }}
-          channel: ${{ channel }}
-          profile: ${{ conan.profile }}
-          build_types: ${{ build_types }}
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: ${{ parameters.conan.profile }}
+          build_types: ${{ parameters.build_types }}
 
   - job: macos1015_xcode11
     pool:
@@ -76,12 +76,12 @@ jobs:
       - template: single-build.yml@templates
         parameters:
           python: $(conan.python)
-          package: ${{ package }}
-          package_version: ${{ package_version }}
-          user: ${{ user }}
-          channel: ${{ channel }}
-          profile: ${{ conan.profile }}
-          build_types: ${{ build_types }}
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: ${{ parameters.conan.profile }}
+          build_types: ${{ parameters.build_types }}
 
   - job: win2016_vs2017
     pool:
@@ -96,12 +96,12 @@ jobs:
       - template: single-build.yml@templates
         parameters:
           python: $(conan.python)
-          package: ${{ package }}
-          package_version: ${{ package_version }}
-          user: ${{ user }}
-          channel: ${{ channel }}
-          profile: ${{ conan.profile }}
-          build_types: ${{ build_types }}
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: ${{ parameters.conan.profile }}
+          build_types: ${{ parameters.build_types }}
 
   - job: win2019_vs2019
     pool:
@@ -116,9 +116,9 @@ jobs:
       - template: single-build.yml@templates
         parameters:
           python: $(conan.python)
-          package: ${{ package }}
-          package_version: ${{ package_version }}
-          user: ${{ user }}
-          channel: ${{ channel }}
-          profile: ${{ conan.profile }}
-          build_types: ${{ build_types }}
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: ${{ parameters.conan.profile }}
+          build_types: ${{ parameters.build_types }}
