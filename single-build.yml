@@ -1,28 +1,18 @@
 parameters:
   - name: conan.python
     type: string
-    default: $(conan.python)
   - name: conan.package
     type: string
-    default: $(conan.package)
   - name: conan.package_version
     type: string
-    default: $(conan.python)
   - name: conan.user
     type: string
-    default: $(conan.user)
   - name: conan.channel
     type: string
-    default: $(conan.channel)
   - name: conan.profile
     type: string
-    default: $(conan.profile)
   - name: conan.build_types
     type: object
-    default:
-    - Release
-    - Debug
-    - RelWithDebInfo
 
 steps:
 - script: ${{ parameters.conan.python }} -m pip install --upgrade conan
