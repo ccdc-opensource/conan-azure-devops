@@ -1,0 +1,87 @@
+parameters:
+  - name: python
+    type: string
+  - name: package
+    type: string
+  - name: package_version
+    type: string
+  - name: user
+    type: string
+  - name: channel
+    type: string
+  - name: profile
+    type: string
+  - name: build_types
+    type: object
+  - name: destination_repository
+    type: string
+
+steps:
+- script: ${{ parameters.python }} -m pip install --upgrade conan
+  displayName: 'Install conan'
+
+- task: ArtifactoryGenericDownload@3
+  displayName: 'Download configuration'
+  inputs:
+    connection: 'devops-ccdc-3rd-party'
+    specSource: 'taskConfiguration'
+    fileSpec: |
+      {
+        "files": [
+          {
+            "pattern": "ccdc-conan-metadata/common-3rdparty-config.zip",
+            "target": "$(Pipeline.Workspace)/.conan/"
+          }
+        ]
+      }
+    failNoOp: true
+
+- task: ArtifactoryConan@1
+  displayName: 'Install configuration'
+  inputs:
+    conanCommand: 'Config Install'
+    configSourceType: 'zip'
+    configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Use ${{ parameters.destination_repository }}'
+  inputs:
+    conanCommand: 'Add Remote'
+    remoteName: '${{ parameters.destination_repository }}'
+    artifactoryService: 'devops-ccdc-3rd-party'
+    conanRepo: '${{ parameters.destination_repository }}'
+    purgeExistingRemotes: true
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Export ${{ parameters.package }}/${{ parameters.package_version }}@'
+  inputs:
+    conanCommand: 'Custom'
+    customArguments: 'export . ${{ parameters.package_version }}@'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- ${{ each build_type in parameters.build_types }}: # Each build_type
+  - task: ArtifactoryConan@1
+    displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
+    inputs:
+      conanCommand: 'Install'
+      pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+      # We build a single package, on purpose, dependencies must be tracked and obtained from the destination repository
+      extraArguments: '--profile ${{ parameters.profile }} --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      buildName: '$(Build.DefinitionName)'
+      buildNumber: '$(Build.BuildNumber)'
+      conanUserHome: '$(Pipeline.Workspace)/.conan'
+
+- task: ArtifactoryConan@1
+  displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
+  inputs:
+    conanCommand: 'Upload'
+    patternOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+    extraArguments: '--all --remote=${{ parameters.destination_repository }}'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+
