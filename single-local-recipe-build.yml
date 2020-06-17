@@ -79,7 +79,7 @@ steps:
     displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'
     inputs:
       conanCommand: 'Custom'
-      customArguments: 'test test_package ${{ parameters.package_version }}@ --profile ${{ parameters.profile }} -s build_type=${{ build_type }}'
+      customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
