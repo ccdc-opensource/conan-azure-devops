@@ -9,6 +9,9 @@ parameters:
   - name: channel
     type: string
     default: testing
+  - name: artifactory_api_key
+    type: string
+    default: ''
   - name: build_types
     type: object
     default:
@@ -44,6 +47,7 @@ jobs:
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: centos7-gcc9-x86_64
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
 
@@ -63,6 +67,7 @@ jobs:
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: ubuntu20-gcc10-x86_64
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
 
@@ -82,6 +87,7 @@ jobs:
           package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode11-x86_64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
@@ -102,6 +108,7 @@ jobs:
           package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: windows-msvc15-amd64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
@@ -122,6 +129,7 @@ jobs:
           package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: windows-msvc16-amd64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
