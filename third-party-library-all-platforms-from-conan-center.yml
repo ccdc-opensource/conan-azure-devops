@@ -87,7 +87,7 @@ jobs:
         - task: CmdLine@2
           inputs:
             script: "brew install ${{ preinstall_pkg }}"
-          displayName: "Contents of ArtifactsDirectory"
+          displayName: "Brew install ${{ preinstall_pkg }}"
 
       - template: single-build.yml@templates
         parameters:
