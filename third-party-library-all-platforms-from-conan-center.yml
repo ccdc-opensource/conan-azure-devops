@@ -29,6 +29,9 @@ parameters:
       - macos1015_xcode11
       - win2016_vs2017
       - win2019_vs2019
+  - name: macos_brew_preinstall
+    type: object
+    default: []
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -80,6 +83,12 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
+      - ${{ each preinstall_pkg in parameters.macos_brew_preinstall }}: # package
+        - task: CmdLine@2
+          inputs:
+            script: "brew install ${{ preinstall_pkg }}"
+          displayName: "Contents of ArtifactsDirectory"
+
       - template: single-build.yml@templates
         parameters:
           python: 'python'
