@@ -88,12 +88,17 @@ steps:
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
-    env:
-      ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
-      ${{ if contains(parameters.profile, 'macos') }}:
+    ${{ if contains(parameters.profile, 'macos') }}:
+      env:
         MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
-      ${{ if contains(parameters.profile, 'windows') }}:
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+    ${{ if contains(parameters.profile, 'windows') }}:
+      env:
         CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+    ${{ if or(contains(parameters.profile, 'ubuntu'), contains(parameters.profile, 'centos')) }}:
+      env:
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
 
   - task: ArtifactoryConan@1
     displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'

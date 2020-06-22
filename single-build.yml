@@ -99,11 +99,11 @@ steps:
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
-      env:
-        CCDC: '1'
-        ${{ if contains(parameters.profile, 'macos') }}:
+      ${{ if contains(parameters.profile, 'macos') }}:
+        env:
           MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
-        ${{ if contains(parameters.profile, 'windows') }}:
+      ${{ if contains(parameters.profile, 'windows') }}:
+        env:
           CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
 
 - task: ArtifactoryConan@1
