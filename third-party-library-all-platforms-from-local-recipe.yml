@@ -34,7 +34,7 @@ parameters:
     default: '10.13'
   - name: windows_bash_path
     type: string
-    default: 'C:\Program Files\Git\bin\bash.exe'
+    default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
