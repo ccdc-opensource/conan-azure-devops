@@ -20,6 +20,9 @@ parameters:
   - name: macos_deployment_target
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY MACOS BUILDS'
+  - name: windows_bash_path
+    type: string
+    default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -96,9 +99,12 @@ steps:
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
-    ${{ if contains(parameters.profile, 'macos') }}:
       env:
-        MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
+        CCDC: '1'
+        ${{ if contains(parameters.profile, 'macos') }}:
+          MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
+        ${{ if contains(parameters.profile, 'windows') }}:
+          CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'

@@ -35,6 +35,9 @@ parameters:
   - name: macos_deployment_target
     type: string
     default: '10.13'
+  - name: windows_bash_path
+    type: string
+    default: 'C:\Program Files\Git\bin\bash.exe'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
