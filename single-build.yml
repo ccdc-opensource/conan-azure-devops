@@ -51,6 +51,19 @@ steps:
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
       print(f'##vso[task.setvariable variable=PATH]{p}')
 
+- task: PythonScript@0
+  displayName: Display new path
+  inputs:
+    scriptSource: 'inline'
+    pythonInterpreter: ${{ parameters.python }}
+    script: |
+      import os
+      print('Path is:')
+      for pi in v.split(os.pathsep):
+          print(f'  - {pi}')
+  env:
+    PATH: '$(path_without_git_bash)'
+
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
   inputs:
