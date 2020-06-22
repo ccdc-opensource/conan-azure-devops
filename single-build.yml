@@ -32,15 +32,13 @@ steps:
   displayName: Get path without git bash
   inputs:
     scriptSource: 'inline'
+    pythonInterpreter: ${{ parameters.python }}
     script: |
       import os
       p = os.environ['PATH']
       print(f'Path is {p}')
       p = p.replace('C:\Program Files\Git\bin', '')
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
-
-- script: ${{ parameters.python }} -c 'import os; print(os.environ["PATH"])'
-  displayName: 'Print PATH envvar'
 
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
@@ -116,9 +114,11 @@ steps:
     ${{ if contains(parameters.profile, 'macos') }}:
       env:
         MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
-    ${{ if and( contains(parameters.profile, 'windows'), not(contains(parameters.windows_bash_path, 'NOT VALID')) ) }}:
+    ${{ if contains(parameters.profile, 'windows') }}:
       env:
-        CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
+        PATH: '$(path_without_git_bash)'
+        ${{ if not(contains(parameters.windows_bash_path, 'NOT VALID')) }}:
+          CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
