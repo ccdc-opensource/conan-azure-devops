@@ -59,7 +59,7 @@ steps:
     script: |
       import os
       print('Path is:')
-      for pi in v.split(os.pathsep):
+      for pi in os.environ['PATH'].split(os.pathsep):
           print(f'  - {pi}')
   env:
     PATH: '$(path_without_git_bash)'
