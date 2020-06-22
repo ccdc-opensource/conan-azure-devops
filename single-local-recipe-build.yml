@@ -28,6 +28,9 @@ steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
   displayName: 'Install conan'
 
+- script: ${{ parameters.python }} -c 'import os; print(os.environ["PATH"])'
+  displayName: 'Print PATH envvar'
+
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
   inputs:
