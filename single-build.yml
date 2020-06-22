@@ -17,6 +17,8 @@ parameters:
     type: string
   - name: destination_repository
     type: string
+  - name: macos_deployment_target
+    type: string
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -93,6 +95,9 @@ steps:
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
+    ${{ if contains(parameters.profile, 'macos') }}:
+      env:
+        MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'

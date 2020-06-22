@@ -17,6 +17,8 @@ parameters:
     type: string
   - name: artifactory_api_key
     type: string
+  - name: macos_deployment_target
+    type: string
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -84,6 +86,8 @@ steps:
       conanUserHome: '$(Pipeline.Workspace)/.conan'
     env:
       ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+      ${{ if contains(parameters.profile, 'macos') }}:
+        MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
 
   - task: ArtifactoryConan@1
     displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'

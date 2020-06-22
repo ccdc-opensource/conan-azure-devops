@@ -32,6 +32,9 @@ parameters:
   - name: macos_brew_preinstall
     type: object
     default: []
+  - name: macos_deployment_target
+    type: string
+    default: '10.13'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -100,6 +103,7 @@ jobs:
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
+          macos_deployment_target: ${{ parameters.macos_deployment_target }}
 
 - ${{ if containsValue(parameters.platforms, 'win2016_vs2017') }}:
   - job: win2016_vs2017

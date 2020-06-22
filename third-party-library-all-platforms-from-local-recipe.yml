@@ -29,6 +29,9 @@ parameters:
       - macos1015_xcode11
       - win2016_vs2017
       - win2019_vs2019
+  - name: macos_deployment_target
+    type: string
+    default: '10.13'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -91,6 +94,7 @@ jobs:
           profile: macos-xcode11-x86_64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
+          macos_deployment_target: ${{ parameters.macos_deployment_target }}
 
 - ${{ if containsValue(parameters.platforms, 'win2016_vs2017') }}:
   - job: win2016_vs2017
