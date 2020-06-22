@@ -59,6 +59,7 @@ jobs:
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
 
 - ${{ if containsValue(parameters.platforms, 'ubuntu2004_gcc10') }}:
   - job: ubuntu2004_gcc10
@@ -79,6 +80,7 @@ jobs:
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - job: macos1015_xcode11
@@ -101,6 +103,7 @@ jobs:
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
 
 - ${{ if containsValue(parameters.platforms, 'win2016_vs2017') }}:
   - job: win2016_vs2017
@@ -122,6 +125,7 @@ jobs:
           profile: windows-msvc15-amd64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019') }}:
   - job: win2019_vs2019
@@ -143,3 +147,4 @@ jobs:
           profile: windows-msvc16-amd64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
