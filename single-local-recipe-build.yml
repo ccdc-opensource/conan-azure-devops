@@ -23,6 +23,8 @@ parameters:
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
+  - name: conan_logging_level
+    type: string
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -71,6 +73,8 @@ steps:
     configSourceType: 'zip'
     configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Use ${{ parameters.destination_repository }}'
@@ -81,6 +85,8 @@ steps:
     conanRepo: '${{ parameters.destination_repository }}'
     purgeExistingRemotes: true
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Export ${{ parameters.package }}/${{ parameters.package_version }}@'
@@ -90,6 +96,8 @@ steps:
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
   - task: ArtifactoryConan@1
@@ -112,15 +120,18 @@ steps:
       env:
         MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
         ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
     ${{ if contains(parameters.profile, 'windows') }}:
       env:
         ${{ if not(contains(parameters.windows_bash_path, 'NOT VALID')) }}:
           CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
         ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
         PATH: '$(path_without_git_bash)'
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
     ${{ if or(contains(parameters.profile, 'ubuntu'), contains(parameters.profile, 'centos')) }}:
       env:
         ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
   - task: ArtifactoryConan@1
     displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'
@@ -136,6 +147,8 @@ steps:
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
+    env:
+      CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
@@ -146,4 +159,6 @@ steps:
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 

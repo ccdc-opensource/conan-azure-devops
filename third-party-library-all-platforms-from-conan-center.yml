@@ -38,6 +38,9 @@ parameters:
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
+  - name: conan_logging_level
+    type: string
+    default: 'critical'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:

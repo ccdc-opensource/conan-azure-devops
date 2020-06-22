@@ -23,6 +23,8 @@ parameters:
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
+  - name: conan_logging_level
+    type: string
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -71,6 +73,8 @@ steps:
     configSourceType: 'zip'
     configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Use ${{ parameters.destination_repository }}'
@@ -81,6 +85,8 @@ steps:
     conanRepo: '${{ parameters.destination_repository }}'
     purgeExistingRemotes: true
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Use ${{ parameters.source_repository }}'
@@ -91,6 +97,8 @@ steps:
     conanRepo: '${{ parameters.source_repository }}'
     purgeExistingRemotes: false
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 # Download just this package from the source repository, dependencies must already be built in the destination
 - task: ArtifactoryConan@1
@@ -101,6 +109,8 @@ steps:
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
   - task: ArtifactoryConan@1
@@ -122,11 +132,16 @@ steps:
     ${{ if contains(parameters.profile, 'macos') }}:
       env:
         MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
     ${{ if contains(parameters.profile, 'windows') }}:
       env:
         PATH: '$(path_without_git_bash)'
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
         ${{ if not(contains(parameters.windows_bash_path, 'NOT VALID')) }}:
           CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
+    ${{ if or(contains(parameters.profile, 'ubuntu'), contains(parameters.profile, 'centos')) }}:
+      env:
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
   displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
@@ -137,4 +152,6 @@ steps:
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
