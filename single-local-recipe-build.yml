@@ -35,8 +35,16 @@ steps:
     pythonInterpreter: ${{ parameters.python }}
     script: |
       import os
+      import collections
       p = os.environ['PATH']
-      print(f'Path is {p}')
+      e = collections.OrderedDict(sorted(os.environ.items()))
+      for k, v in e.items():
+          if k == 'PATH':
+              print('Path is:')
+              for pi in v.split(os.pathsep):
+                  print(f'  - {pi}')
+          else:
+              print(f'{k}={v}')
       p = p.replace('C:\\Program Files\\Git\\bin;', '')
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
 
