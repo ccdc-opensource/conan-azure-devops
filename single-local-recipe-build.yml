@@ -49,6 +49,7 @@ steps:
               print(f'{k}={v}')
       p = p.replace('C:\\Program Files\\Git\\bin;', '')
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
+      print(f'##vso[task.setvariable variable=PATH]{p}')
 
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'

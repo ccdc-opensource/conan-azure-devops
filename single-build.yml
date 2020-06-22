@@ -49,6 +49,7 @@ steps:
               print(f'{k}={v}')
       p = p.replace('C:\\Program Files\\Git\\bin;', '')
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
+      print(f'##vso[task.setvariable variable=PATH]{p}')
 
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
@@ -133,6 +134,7 @@ steps:
       env:
         MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
         CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+        CONAN_USER_HOME: '$(Pipeline.Workspace)/.conan'
     ${{ if contains(parameters.profile, 'windows') }}:
       env:
         PATH: '$(path_without_git_bash)'
