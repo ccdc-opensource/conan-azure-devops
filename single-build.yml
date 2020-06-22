@@ -28,6 +28,17 @@ steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
   displayName: 'Install conan'
 
+- task: PythonScript@0
+  displayName: Get path without git bash
+  inputs:
+    scriptSource: 'inline'
+    script: |
+      import os
+      p = os.environ['PATH']
+      print(f'Path is {p}')
+      p = p.replace('C:\Program Files\Git\bin', '')
+      print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
+
 - script: ${{ parameters.python }} -c 'import os; print(os.environ["PATH"])'
   displayName: 'Print PATH envvar'
 
