@@ -30,26 +30,22 @@ steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
   displayName: 'Install conan'
 
-- task: PythonScript@0
-  displayName: Get path without git bash
-  inputs:
-    scriptSource: 'inline'
-    pythonInterpreter: ${{ parameters.python }}
-    script: |
-      import os
-      import collections
-      p = os.environ['PATH']
-      e = collections.OrderedDict(sorted(os.environ.items()))
-      for k, v in e.items():
-          if k == 'PATH':
-              print('Path is:')
-              for pi in v.split(os.pathsep):
-                  print(f'  - {pi}')
-          else:
-              print(f'{k}={v}')
-      p = p.replace('C:\\Program Files\\Git\\bin;', '')
-      print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
-      print(f'##vso[task.setvariable variable=PATH]{p}')
+# This hack is required to get some packages to build. Particularly the ones that
+# require use of the msys2 package in a specific configurations. Microsoft hosted agents
+# insert git paths that contain bash executables, which interfere with the process.
+${{ if contains(parameters.profile, 'windows') }}:
+  - task: PythonScript@0
+    displayName: Get path without git paths
+    inputs:
+      scriptSource: 'inline'
+      pythonInterpreter: ${{ parameters.python }}
+      script: |
+        import os
+        path_without_git_bash = os.pathsep.join([ x for x in os.environ['PATH'].split(os.pathsep) if 'Git' not in x])
+        print(f'##vso[task.setvariable variable=path_without_git_bash;]{path_without_git_bash}')
+        print('Path without git paths:')
+        for pi in path_without_git_bash.split(os.pathsep):
+            print(f'  - {pi}')
 
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
