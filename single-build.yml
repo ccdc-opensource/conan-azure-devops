@@ -37,7 +37,7 @@ steps:
       import os
       p = os.environ['PATH']
       print(f'Path is {p}')
-      p = p.replace('C:\Program Files\Git\bin', '')
+      p = p.replace('C:\\Program Files\\Git\\bin;', '')
       print(f'##vso[task.setvariable variable=path_without_git_bash]{p}')
 
 - task: ArtifactoryGenericDownload@3
