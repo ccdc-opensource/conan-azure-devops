@@ -38,7 +38,6 @@ steps:
     script: |
       import os
       import collections
-      p = os.environ['PATH']
       e = collections.OrderedDict(sorted(os.environ.items()))
       for k, v in e.items():
           if k == 'PATH':
@@ -47,8 +46,8 @@ steps:
                   print(f'  - {pi}')
           else:
               print(f'{k}={v}')
-      p = os.pathsep.join([ x for x in os.environ['BADPATH'].split(os.pathsep) if 'Git' not in x])
-      print(f'##vso[task.setvariable variable=path_without_git_bash;]{p}')
+      path_without_git_bash = os.pathsep.join([ x for x in os.environ['PATH'].split(os.pathsep) if 'Git' not in x])
+      print(f'##vso[task.setvariable variable=path_without_git_bash;]{path_without_git_bash}')
       #print(f'##vso[task.setvariable variable=PATH;]{p}')
 
 - task: PythonScript@0
