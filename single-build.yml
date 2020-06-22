@@ -19,6 +19,7 @@ parameters:
     type: string
   - name: macos_deployment_target
     type: string
+    default: 'NOT VALID UNLESS SET, ONLY USED BY MACOS BUILDS'
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
