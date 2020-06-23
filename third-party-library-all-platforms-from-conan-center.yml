@@ -124,7 +124,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            Remove-Item -Path C:\tools\mingw64 -Force
+            choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "3.8"
@@ -152,7 +152,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            Remove-Item -Path C:\tools\mingw64 -Force
+            choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "3.8"
