@@ -131,6 +131,9 @@ jobs:
             if (Test-Path "$env:ChocolateyInstall\lib\mingw") {
               Move-Item "$env:ChocolateyInstall\lib\mingw" -Destination "C:\removed-mingw" -Force
             }
+            dir $env:ChocolateyInstall\lib
+            dir $env:ChocolateyInstall\bin
+            choco list --localonly
             choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
@@ -166,6 +169,9 @@ jobs:
             if (Test-Path "$env:ChocolateyInstall\lib\mingw") {
               Move-Item "$env:ChocolateyInstall\lib\mingw" -Destination "C:\removed-mingw" -Force
             }
+            dir $env:ChocolateyInstall\lib
+            dir $env:ChocolateyInstall\bin
+            choco list --localonly
             choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
