@@ -124,6 +124,7 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
+            dir C:\
             # Makes removal faster
             $chocolibs = ('OpenSSL.Light', 'mingw')
             foreach($chocolib in $chocolibs) {
