@@ -163,7 +163,7 @@ jobs:
               'lto1.exe',
               'make.exe',
               'mingw32-make.exe',
-              'mingw64-pkg.bat
+              'mingw64-pkg.bat',
               'nm.exe',
               'objcopy.exe',
               'objdump.exe',
@@ -249,7 +249,7 @@ jobs:
               'lto1.exe',
               'make.exe',
               'mingw32-make.exe',
-              'mingw64-pkg.bat
+              'mingw64-pkg.bat',
               'nm.exe',
               'objcopy.exe',
               'objdump.exe',
