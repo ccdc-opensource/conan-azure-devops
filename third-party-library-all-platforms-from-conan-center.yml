@@ -124,8 +124,14 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            dir C:\
-            # Makes removal faster
+            dir c:\tools
+            # These packages interfere with conan builds, which provide their own versions
+            $cdirs = ('msys64', 'Strawberry', 'vcpkg')
+            foreach($cdir in $cdirs) {
+              if (Test-Path "C:\$cdir") {
+                Move-Item "C:\$cdir" -Destination "C:\removed-$cdir" -Force
+              }
+            }
             $chocolibs = ('OpenSSL.Light', 'mingw')
             foreach($chocolib in $chocolibs) {
               if (Test-Path "$env:ChocolateyInstall\lib\$chocolib") {
