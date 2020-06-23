@@ -119,6 +119,12 @@ jobs:
     pool:
       vmImage: "vs2017-win2016"
     steps:
+      - task: PowerShell@2
+        displayName: "Nuke useless tools"
+        inputs:
+          targetType: 'inline'
+          script: |
+            Remove-Item -Path C:\tools\mingw64 -Force
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "3.8"
@@ -141,6 +147,12 @@ jobs:
     pool:
       vmImage: "windows-2019"
     steps:
+      - task: PowerShell@2
+        displayName: "Nuke useless tools"
+        inputs:
+          targetType: 'inline'
+          script: |
+            Remove-Item -Path C:\tools\mingw64 -Force
       - task: UsePythonVersion@0
         inputs:
           versionSpec: "3.8"
