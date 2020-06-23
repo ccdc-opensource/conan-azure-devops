@@ -124,6 +124,13 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
+            # Makes removal faster
+            if (Test-Path "$env:ChocolateyInstall\lib\gradle") {
+              Move-Item "$env:ChocolateyInstall\lib\gradle" -Destination "C:\removed-gradle" -Force
+            }
+            if (Test-Path "$env:ChocolateyInstall\lib\mingw") {
+              Move-Item "$env:ChocolateyInstall\lib\mingw" -Destination "C:\removed-mingw" -Force
+            }
             choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
@@ -152,6 +159,13 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
+            # Makes removal faster
+            if (Test-Path "$env:ChocolateyInstall\lib\gradle") {
+              Move-Item "$env:ChocolateyInstall\lib\gradle" -Destination "C:\removed-gradle" -Force
+            }
+            if (Test-Path "$env:ChocolateyInstall\lib\mingw") {
+              Move-Item "$env:ChocolateyInstall\lib\mingw" -Destination "C:\removed-mingw" -Force
+            }
             choco uninstall -y mingw
       - task: UsePythonVersion@0
         inputs:
