@@ -25,6 +25,10 @@ parameters:
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
   - name: conan_logging_level
     type: string
+  # see https://github.com/conan-io/conan/issues/6514
+  - name: workaround_autotools_windows_debug_issue
+    type: boolean
+    default: false
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -137,6 +141,8 @@ steps:
         CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
         ${{ if not(contains(parameters.windows_bash_path, 'NOT VALID')) }}:
           CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
+        ${{ if and( eq(parameters.workaround_autotools_windows_debug_issue, true), contains(build_type, 'Deb') ) }}:
+          CONAN_CPU_COUNT: '1'
     ${{ if or(contains(parameters.profile, 'ubuntu'), contains(parameters.profile, 'centos')) }}:
       env:
         CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}

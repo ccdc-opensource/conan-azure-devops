@@ -38,6 +38,10 @@ parameters:
   - name: conan_logging_level
     type: string
     default: 'critical'
+  # see https://github.com/conan-io/conan/issues/6514
+  - name: workaround_autotools_windows_debug_issue
+    type: boolean
+    default: false
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -127,6 +131,7 @@ jobs:
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
+          workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019') }}:
   - job: win2019_vs2019
@@ -150,3 +155,4 @@ jobs:
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
+          workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
