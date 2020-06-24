@@ -35,6 +35,9 @@ parameters:
   - name: macos_brew_preinstall
     type: object
     default: []
+  - name: centos_yum_preinstall
+    type: object
+    default: []
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
@@ -55,6 +58,11 @@ jobs:
     container: rockdreamer/centos7-gcc9:latest
     steps:
       # No need to setup specific python, the container's python3 will be used
+      - ${{ each preinstall_pkg in parameters.centos_yum_preinstall }}: # package
+        - task: CmdLine@2
+          inputs:
+            script: "sudo yum install -y ${{ preinstall_pkg }}"
+          displayName: "yum install ${{ preinstall_pkg }}"
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python3'
