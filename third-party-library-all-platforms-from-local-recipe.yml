@@ -32,6 +32,9 @@ parameters:
   - name: macos_deployment_target
     type: string
     default: '10.13'
+  - name: macos_brew_preinstall
+    type: object
+    default: []
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
@@ -95,6 +98,11 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
+      - ${{ each preinstall_pkg in parameters.macos_brew_preinstall }}: # package
+        - task: CmdLine@2
+          inputs:
+            script: "brew install ${{ preinstall_pkg }}"
+          displayName: "Brew install ${{ preinstall_pkg }}"
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
