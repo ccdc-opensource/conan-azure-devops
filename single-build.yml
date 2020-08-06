@@ -31,10 +31,10 @@ parameters:
     default: false
 
 variables:
-${{ if not(contains(parameters.package_version, '@')) }}:
-  package_version: "${{ parameters.package_version }}@"
-${{ if contains(parameters.package_version, '@') }}:
-  package_version: "${{ parameters.package_version }}"
+  ${{ if not(contains(parameters.package_version, '@')) }}:
+    package_version: "${{ parameters.package_version }}@"
+  ${{ if contains(parameters.package_version, '@') }}:
+    package_version: "${{ parameters.package_version }}"
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
