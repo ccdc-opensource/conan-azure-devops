@@ -76,7 +76,7 @@ jobs:
         parameters:
           python: 'python3'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: centos7-gcc9-x86_64
@@ -97,7 +97,7 @@ jobs:
         parameters:
           python: 'python3'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: ubuntu20-gcc10-x86_64
@@ -125,7 +125,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: macos-xcode11-x86_64
@@ -149,7 +149,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: windows-msvc15-amd64
@@ -173,7 +173,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: windows-msvc16-amd64
@@ -197,7 +197,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: windows-msvc15-x86
@@ -221,7 +221,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: windows-msvc16-x86
@@ -245,7 +245,7 @@ jobs:
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: $( package_version )
+          package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: windows-msys-amd64
