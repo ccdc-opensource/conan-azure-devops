@@ -30,6 +30,12 @@ parameters:
     type: boolean
     default: false
 
+variables:
+${{ if not(contains(parameters.package_version, '@')) }}:
+  package_version: "${{ parameters.package_version }}@"
+${{ if contains(parameters.package_version, '@') }}:
+  package_version: "${{ parameters.package_version }}"
+
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
   displayName: 'Install conan'
@@ -103,10 +109,10 @@ steps:
 
 # Download just this package from the source repository, dependencies must already be built in the destination
 - task: ArtifactoryConan@1
-  displayName: 'Download ${{ parameters.package }}/${{ parameters.package_version }}@'
+  displayName: 'Download ${{ parameters.package }}/$(package_version)'
   inputs:
     conanCommand: 'Custom'
-    customArguments: 'download ${{ parameters.package }}/${{ parameters.package_version }}@ --remote=${{ parameters.source_repository }} --recipe'
+    customArguments: 'download ${{ parameters.package }}/$(package_version) --remote=${{ parameters.source_repository }} --recipe'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
@@ -118,7 +124,7 @@ steps:
     displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
     inputs:
       conanCommand: 'Install'
-      pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+      pathOrReference: '${{ parameters.package }}/$(package_version)'
       # We build a single package, on purpose, dependencies must be tracked
       ${{ if contains(parameters.profile, 'windows') }}:
         ${{ if eq(build_type, 'Debug') }}:
@@ -148,10 +154,10 @@ steps:
         CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - task: ArtifactoryConan@1
-  displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
+  displayName: 'Upload ${{ parameters.package }}/$(package_version)'
   inputs:
     conanCommand: 'Upload'
-    patternOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+    patternOrReference: '${{ parameters.package }}/$(package_version)'
     extraArguments: '--all --remote=${{ parameters.destination_repository }}'
     buildName: '$(Build.DefinitionName)'
     buildNumber: '$(Build.BuildNumber)'
