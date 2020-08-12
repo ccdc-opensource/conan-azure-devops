@@ -51,6 +51,9 @@ parameters:
   - name: workaround_autotools_windows_debug_issue
     type: boolean
     default: false
+  - name: artifactory_service_connection
+    type: string
+    default: 'devops-ccdc-3rd-party'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -80,6 +83,7 @@ jobs:
               - ${{ build_type }}
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'ubuntu2004_gcc10') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -103,6 +107,7 @@ jobs:
               - ${{ build_type }}
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -133,6 +138,7 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             macos_deployment_target: ${{ parameters.macos_deployment_target }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if and( containsValue(parameters.platforms, 'win2016_vs2017'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -159,6 +165,7 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if and( containsValue(parameters.platforms, 'win2019_vs2019'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -185,6 +192,7 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2016_vs2017_x86') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -211,6 +219,7 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019_x86') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -237,6 +246,7 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_msys') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -263,3 +273,4 @@ jobs:
             destination_repository: ${{ parameters.destination_repository }}
             conan_logging_level: ${{ parameters.conan_logging_level }}
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}

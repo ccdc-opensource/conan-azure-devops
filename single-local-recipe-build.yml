@@ -29,6 +29,9 @@ parameters:
   - name: workaround_autotools_windows_debug_issue
     type: boolean
     default: false
+  - name: artifactory_service_connection
+    type: string
+    default: 'devops-ccdc-3rd-party'
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -53,7 +56,7 @@ steps:
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
   inputs:
-    connection: 'devops-ccdc-3rd-party'
+    connection: ${{ parameters.artifactory_service_connection }}
     specSource: 'taskConfiguration'
     fileSpec: |
       {
@@ -81,7 +84,7 @@ steps:
   inputs:
     conanCommand: 'Add Remote'
     remoteName: '${{ parameters.destination_repository }}'
-    artifactoryService: 'devops-ccdc-3rd-party'
+    artifactoryService: ${{ parameters.artifactory_service_connection }}
     conanRepo: '${{ parameters.destination_repository }}'
     purgeExistingRemotes: true
     conanUserHome: '$(Pipeline.Workspace)/.conan'

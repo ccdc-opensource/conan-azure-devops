@@ -51,6 +51,9 @@ parameters:
   - name: workaround_autotools_windows_debug_issue
     type: boolean
     default: false
+  - name: artifactory_service_connection
+    type: string
+    default: 'devops-ccdc-3rd-party'
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -78,6 +81,7 @@ jobs:
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'ubuntu2004_gcc10') }}:
   - job: ubuntu2004_gcc10
@@ -99,6 +103,7 @@ jobs:
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - job: macos1015_xcode11
@@ -127,6 +132,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if and( containsValue(parameters.platforms, 'win2016_vs2017'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - job: win2016_vs2017
@@ -151,6 +157,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if and( containsValue(parameters.platforms, 'win2019_vs2019'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - job: win2019_vs2019
@@ -175,6 +182,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2016_vs2017_x86') }}:
   - job: win2016_vs2017_x86
@@ -199,6 +207,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019_x86') }}:
   - job: win2019_vs2019_x86
@@ -223,6 +232,7 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_msys') }}:
   - job: win2019_msys
@@ -247,3 +257,4 @@ jobs:
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
