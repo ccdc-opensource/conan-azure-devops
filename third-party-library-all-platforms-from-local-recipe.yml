@@ -149,7 +149,7 @@ jobs:
         inputs:
           scriptSource: 'inline'
           script: >
-            from urllib.request import urlretrieve
+            from urllib.request import urlretrieve;
             urlretrieve('https://certificategeneration.com/freshdesk/cabundles/COMODO_DV_SHA-256_bundle.crt', 'COMODO_DV_SHA-256_bundle.crt')
       - script: |
           certutil -f -addstore root COMODO_DV_SHA-256_bundle.crt
