@@ -144,6 +144,16 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
+      - task: PythonScript@0
+        displayName: Download Sectigo CA certificate
+        inputs:
+          scriptSource: 'inline'
+          script: >
+            from urllib.request import urlretrieve
+            urlretrieve('https://certificategeneration.com/freshdesk/cabundles/COMODO_DV_SHA-256_bundle.crt', 'COMODO_DV_SHA-256_bundle.crt')
+      - script: |
+          certutil -f -addstore root COMODO_DV_SHA-256_bundle.crt
+        displayName: Install Sectigo CA certificate
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
