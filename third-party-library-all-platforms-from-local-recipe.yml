@@ -148,9 +148,9 @@ jobs:
       # https://github.com/jfrog/artifactory-azure-devops-extension/issues/122
       - checkout: git://ccdc-3rd-party/conan-azure-devops@development
         path: conan-azure-devops
-      - script: dir  ${{ Agent.BuildDirectory }}\\conan-azure-devops
+      - script: dir  $(Agent.BuildDirectory)\\conan-azure-devops
       - script: |
-          certutil -f -addstore root ${{ Agent.BuildDirectory }}\\conan-azure-devops\\COMODO_DV_SHA-256_bundle.crt
+          certutil -f -addstore root $(Agent.BuildDirectory)\\conan-azure-devops\\COMODO_DV_SHA-256_bundle.crt
         displayName: Install Sectigo CA certificate
       - template: single-local-recipe-build.yml@templates
         parameters:
