@@ -146,11 +146,11 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
-
+      - script: dir ${Agent.BuildDirectory}
       # Sectigo CA certificate downloaded from https://certificategeneration.com/freshdesk/cabundles/COMODO_DV_SHA-256_bundle.crt
       # https://github.com/jfrog/artifactory-azure-devops-extension/issues/122
       - script: |
-          certutil -f -addstore root conan-azure-devops/COMODO_DV_SHA-256_bundle.crt
+          certutil -f -addstore root ${Agent.BuildDirectory}\\conan-azure-devops\\COMODO_DV_SHA-256_bundle.crt
         displayName: Install Sectigo CA certificate
       - template: single-local-recipe-build.yml@templates
         parameters:
