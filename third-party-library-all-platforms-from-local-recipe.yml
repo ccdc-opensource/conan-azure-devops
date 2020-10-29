@@ -146,7 +146,7 @@ jobs:
         displayName: "Use latest python 3.8"
       # Sectigo CA certificate downloaded from https://certificategeneration.com/freshdesk/cabundles/COMODO_DV_SHA-256_bundle.crt
       # https://github.com/jfrog/artifactory-azure-devops-extension/issues/122
-      - checkout: git://ccdc-3rd-party/conan-azure-devops@origin/development
+      - checkout: git://ccdc-3rd-party/conan-azure-devops@development
         path: conan-azure-devops
       - script: |
           certutil -f -addstore root ${Agent.BuildDirectory}\\COMODO_DV_SHA-256_bundle.crt
