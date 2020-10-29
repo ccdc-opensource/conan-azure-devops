@@ -139,7 +139,7 @@ jobs:
     pool:
       vmImage: "vs2017-win2016"
     steps:
-      - checkout: git://devops/conan-azure-devops
+      - checkout: git://ccdc-3rd-party/conan-azure-devops
         path: conan-azure-devops
       - template: remove-interfering-tools-on-windows.yml@templates
       - task: UsePythonVersion@0
