@@ -137,7 +137,7 @@ jobs:
 - ${{ if and( containsValue(parameters.platforms, 'win2016_vs2017'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - job: win2016_vs2017
     pool:
-      vmImage: "vs2017-wi n2016"
+      vmImage: "vs2017-win2016"
     steps:
       - template: remove-interfering-tools-on-windows.yml@templates
       - task: UsePythonVersion@0
