@@ -137,7 +137,7 @@ jobs:
 - ${{ if and( containsValue(parameters.platforms, 'win2016_vs2017'), not(containsValue(parameters.platforms, 'x86')) ) }}:
   - job: win2016_vs2017
     pool:
-      vmImage: "vs2017-win2016"
+      vmImage: "vs2017-wi n2016"
     steps:
       - template: remove-interfering-tools-on-windows.yml@templates
       - task: UsePythonVersion@0
@@ -148,10 +148,8 @@ jobs:
       # https://github.com/jfrog/artifactory-azure-devops-extension/issues/122
       - checkout: git://ccdc-3rd-party/conan-azure-devops@development
         path: conan-azure-devops
-      - script: |
-          certutil -f -addstore root $(Agent.BuildDirectory)\\conan-azure-devops\\COMODO_DV_SHA-256_bundle.crt
-          certutil -f -addstore root $(Agent.BuildDirectory)\\conan-azure-devops\\USERTrustRSAAddTrustCA.crt
-        displayName: Install Sectigo and USERTrust CA
+      - script: certutil -f -addstore root $(Agent.BuildDirectory)\\conan-azure-devops\\USERTrustRSAAddTrustCA.crt
+        displayName: Install USERTrust CA certificate
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
