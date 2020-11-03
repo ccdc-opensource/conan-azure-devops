@@ -144,11 +144,14 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
-      # Sectigo CA certificate downloaded from https://certificategeneration.com/freshdesk/cabundles/COMODO_DV_SHA-256_bundle.crt
-      # https://github.com/jfrog/artifactory-azure-devops-extension/issues/122
-      - checkout: git://ccdc-3rd-party/conan-azure-devops@development
-        path: conan-azure-devops
-      - script: certutil -f -addstore root $(Agent.BuildDirectory)\\conan-azure-devops\\USERTrustRSAAddTrustCA.crt
+      - task: PythonScript@0
+        displayName: Download USERTrust CA certificate
+        inputs:
+          scriptSource: 'inline'
+          script: |
+            from urllib.request import urlretrieve;
+            urlretrieve('https://crt.sh/?d=1199354', '$(Agent.BuildDirectory)\\USERTrustRSAAddTrustCA.crt')
+      - script: certutil -f -addstore root $(Agent.BuildDirectory)\\USERTrustRSAAddTrustCA.crt
         displayName: Install USERTrust CA certificate
       - template: single-local-recipe-build.yml@templates
         parameters:
