@@ -124,8 +124,8 @@ jobs:
           displayName: "Brew install ${{ preinstall_pkg }}"
       - task: CmdLine@2
         inputs:
-          script: "sudo xcode-select -s /Applications/Xcode_${{ macos_xcode_version }}.app/Contents/Developer"
-        displayName: "Select XCode ${{ macos_xcode_version }}"
+          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ parameters.macos_xcode_version }}"
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
