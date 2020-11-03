@@ -144,6 +144,13 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
+
+      # The vs2017-win2016 agent images are missing the root CA certificate used to sign Sectigo's
+      # SSL certificates. This is causing failures trying to connect to Artifactory, as the agent
+      # will reject the ssl certificate used by our Artifactory instance on these agents only.
+      # The workaround is to download and manually install the root CA certificate.
+      # This has been reported to Microsoft:
+      # https://developercommunity2.visualstudio.com/t/hosted-agents-vs2017-win2016-vmimage-is-missing-us/1239741
       - task: PythonScript@0
         # crt.sh is a Sectigo-run certificate search engine
         displayName: Download USERTrust CA certificate
@@ -154,6 +161,7 @@ jobs:
             urlretrieve('https://crt.sh/?d=1199354', r'$(Agent.BuildDirectory)\USERTrustRSAAddTrustCA.crt')
       - script: certutil -f -addstore root $(Agent.BuildDirectory)\\USERTrustRSAAddTrustCA.crt
         displayName: Install USERTrust CA certificate
+
       - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
