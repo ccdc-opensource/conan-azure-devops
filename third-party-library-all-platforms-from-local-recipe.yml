@@ -150,7 +150,7 @@ jobs:
           scriptSource: 'inline'
           script: |
             from urllib.request import urlretrieve;
-            urlretrieve('https://crt.sh/?d=1199354', '$(Agent.BuildDirectory)\\USERTrustRSAAddTrustCA.crt')
+            urlretrieve('https://crt.sh/?d=1199354', r'$(Agent.BuildDirectory)\USERTrustRSAAddTrustCA.crt')
       - script: certutil -f -addstore root $(Agent.BuildDirectory)\\USERTrustRSAAddTrustCA.crt
         displayName: Install USERTrust CA certificate
       - template: single-local-recipe-build.yml@templates
