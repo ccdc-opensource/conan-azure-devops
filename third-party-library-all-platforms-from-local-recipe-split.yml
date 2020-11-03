@@ -38,6 +38,9 @@ parameters:
   - name: macos_brew_preinstall
     type: object
     default: []
+  - name: macos_xcode_version
+    type: string
+    default: '11.7'
   - name: centos_yum_preinstall
     type: object
     default: []
@@ -124,6 +127,10 @@ jobs:
             inputs:
               script: "brew install ${{ preinstall_pkg }}"
             displayName: "Brew install ${{ preinstall_pkg }}"
+        - task: CmdLine@2
+          inputs:
+            script: "sudo xcode-select -s /Applications/Xcode_${{ macos_xcode_version }}.app/Contents/Developer"
+          displayName: "Select XCode ${{ macos_xcode_version }}"
         - template: single-local-recipe-build.yml@templates
           parameters:
             python: 'python'

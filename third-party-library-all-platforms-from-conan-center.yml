@@ -41,6 +41,9 @@ parameters:
   - name: macos_deployment_target
     type: string
     default: '10.13'
+  - name: macos_xcode_version
+    type: string
+    default: '11.7'
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
@@ -125,7 +128,10 @@ jobs:
           inputs:
             script: "brew install ${{ preinstall_pkg }}"
           displayName: "Brew install ${{ preinstall_pkg }}"
-
+      - task: CmdLine@2
+        inputs:
+          script: "sudo xcode-select -s /Applications/Xcode_${{ macos_xcode_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ macos_xcode_version }}"
       - template: single-build.yml@templates
         parameters:
           python: 'python'
