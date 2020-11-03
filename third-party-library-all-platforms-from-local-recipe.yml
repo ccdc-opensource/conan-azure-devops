@@ -145,6 +145,7 @@ jobs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
       - task: PythonScript@0
+        # crt.sh is a Sectigo-run certificate search engine
         displayName: Download USERTrust CA certificate
         inputs:
           scriptSource: 'inline'
