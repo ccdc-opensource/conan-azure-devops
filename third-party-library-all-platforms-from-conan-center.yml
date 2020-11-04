@@ -157,6 +157,7 @@ jobs:
         inputs:
           versionSpec: "3.8"
         displayName: "Use latest python 3.8"
+      - template: add-missing-certificates-on-windows.yml@templates
       - template: single-build.yml@templates
         parameters:
           python: 'python'
