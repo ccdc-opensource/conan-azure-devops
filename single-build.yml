@@ -32,6 +32,9 @@ parameters:
   - name: artifactory_service_connection
     type: string
     default: 'devops-ccdc-3rd-party'
+  - name: use_release_zlib_profile
+    type: boolean
+    default: false
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -117,6 +120,26 @@ steps:
     CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
+  - task: PythonScript@0
+    displayName: Get additional profiles required by build
+    inputs:
+      scriptSource: 'inline'
+      pythonInterpreter: ${{ parameters.python }}
+      script: |
+        use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
+        profile = '${{ parameters.profile }}'
+        build_type = '${{ build_type }}'
+        additional_profiles = []
+
+        if use_release_zlib_profile:
+          if 'vs2017' in profile:
+            additional_profiles.append('windows-msvc15-release-zlib')
+          if 'vs2019' in profile:
+            additional_profiles.append('windows-msvc16-release-zlib')
+
+        value = ' '.join([f'--profile {p}' for p in additional_profiles])
+        print(f'##vso[task.setvariable variable=additional_profiles;]{value}')
+
   - task: ArtifactoryConan@1
     displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
     inputs:
@@ -125,11 +148,11 @@ steps:
       # We build a single package, on purpose, dependencies must be tracked
       ${{ if contains(parameters.profile, 'windows') }}:
         ${{ if eq(build_type, 'Debug') }}:
-          extraArguments: '--profile ${{ parameters.profile }}-debug --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+          extraArguments: '--profile ${{ parameters.profile }}-debug $[ additional_profiles ] --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
         ${{ if ne(build_type, 'Debug') }}:
-          extraArguments: '--profile ${{ parameters.profile }}-release --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+          extraArguments: '--profile ${{ parameters.profile }}-release $[ additional_profiles ] --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       ${{ if not(contains(parameters.profile, 'windows')) }}:
-        extraArguments: '--profile ${{ parameters.profile }} --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+        extraArguments: '--profile ${{ parameters.profile }} $[ additional_profiles ] --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
