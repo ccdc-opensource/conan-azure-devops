@@ -118,9 +118,9 @@ steps:
         additional_profiles = []
 
         if use_release_zlib_profile:
-          if 'vs2017' in profile:
+          if 'msvc15' in profile:
             additional_profiles.append('windows-msvc15-release-zlib')
-          if 'vs2019' in profile:
+          if 'msvc16' in profile:
             additional_profiles.append('windows-msvc16-release-zlib')
 
         value = ' '.join([f'--profile {p}' for p in additional_profiles])
