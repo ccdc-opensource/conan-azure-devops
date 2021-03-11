@@ -29,8 +29,9 @@ if not shutil.which(jfrog_cli):
 artifactory_user = os.environ['USER']
 artifactory_api_key = os.environ["ARTIFACTORY_API_KEY"]
 
-conan_env['CONAN_LOGIN_USERNAME']=artifactory_user
-conan_env['CONAN_PASSWORD']=artifactory_api_key
+conan_env['CONAN_LOGIN_USERNAME'] = artifactory_user
+conan_env['CONAN_PASSWORD'] = artifactory_api_key
+
 
 def run_command(args):
     print(f'Running {" ".join(args)}')
@@ -42,19 +43,19 @@ def run_conan(args):
     run_command(conan_args)
 
 
-def build_from_conan_center(package, package_version, platform,
-                            build_types=['Release', 'Debug', 'RelWithDebInfo'],
-                            source_repository='public-conan-center',
-                            destination_repository='ccdc-3rdparty-conan',
-                            macos_brew_preinstall=[],
-                            centos_yum_preinstall=[],
-                            macos_deployment_target='10.13',
-                            macos_xcode_version='11.7',
-                            windows_bash_path=None,
-                            conan_logging_level='critical',
-                            workaround_autotools_windows_debug_issue=False,
-                            use_release_zlib_profile=False,
-                            ):
+def build_conan_package(package, package_version, local_recipe, platform,
+                        build_types=['Release', 'Debug', 'RelWithDebInfo'],
+                        source_repository='public-conan-center',
+                        destination_repository='ccdc-3rdparty-conan',
+                        macos_brew_preinstall=[],
+                        centos_yum_preinstall=[],
+                        macos_deployment_target='10.13',
+                        macos_xcode_version='11.7',
+                        windows_bash_path=None,
+                        conan_logging_level='critical',
+                        workaround_autotools_windows_debug_issue=False,
+                        use_release_zlib_profile=False,
+                        ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
     # conan_env['CONAN_USER_HOME']='.conan'
@@ -101,7 +102,7 @@ def build_from_conan_center(package, package_version, platform,
     if platform == 'macos1015_xcode12':
         conan_profile = 'macos-xcode12-x86_64'
     if platform == 'macos11_xcode12_arm':
-        conan_profile = 'macos-xcode12-armv8.3'
+        conan_profile = 'macos-xcode12-armv8'
 
     if platform == 'win2016_vs2017':
         conan_profile = 'windows-msvc15-amd64'
@@ -119,24 +120,21 @@ def build_from_conan_center(package, package_version, platform,
         'install',
         f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config.zip'
     ])
-    # run_conan([
-    #     'remote',
-    #     'add',
-    #     source_repository
-    # ])
-    # run_conan([
-    #     'remote',
-    #     'add',
-    #     destination_repository
-    # ])
 
-# Download just this package from the source repository, dependencies must already be built in the destination
-    run_conan([
-        'download',
-        f'{package}/{package_version}',
-        f'--remote={ source_repository }',
-        '--recipe'
-    ])
+    if local_recipe:
+        run_conan([
+            'export',
+            local_recipe,
+            f'{package_version}',
+        ])
+    else:
+        # Download just this package from the source repository, dependencies must already be built in the destination
+        run_conan([
+            'download',
+            f'{package}/{package_version}',
+            f'--remote={ source_repository }',
+            '--recipe'
+        ])
 
     for build_type in build_types:
         additional_profiles = []
@@ -165,8 +163,29 @@ def build_from_conan_center(package, package_version, platform,
             '-s',
             f'build_type={ build_type }',
         ]
-        conan_install_env = dict(os.environ)
         run_conan(conan_install_args)
+
+        if local_recipe:
+            conan_test_args = [
+                'test',
+                f'{local_recipe}/test_package',
+                f'{package}/{package_version}',
+            ]
+            if 'windows' in conan_profile:
+                if build_type == 'Debug':
+                    conan_test_args += ['--profile', f'{conan_profile}-debug']
+                else:
+                    conan_test_args += ['--profile',
+                                        f'{conan_profile}-release']
+            else:
+                conan_test_args += ['--profile', conan_profile]
+            for additional_profile in additional_profiles:
+                conan_test_args += ['--profile', additional_profile]
+            conan_test_args += [
+                '-s',
+                f'build_type={ build_type }',
+            ]
+            run_conan(conan_test_args)
 
     run_conan([
         'upload',
@@ -204,6 +223,8 @@ def main():
         '--workaround-autotools-windows-debug-issue', help='', action='store_true')
     parser.add_argument('--use-release-zlib-profile',
                         help='', action='store_true')
+    parser.add_argument(
+        '--local-recipe', help='directory that contains conanfile.py')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
@@ -217,9 +238,10 @@ def main():
         centos_yum_preinstall = []
     else:
         centos_yum_preinstall = list(args.centos_yum_preinstall)
-    build_from_conan_center(
+    build_conan_package(
         package=args.package,
         package_version=args.package_version,
+        local_recipe=args.local_recipe,
         platform=args.platform,
         build_types=build_types,
         source_repository=args.source_repository,
