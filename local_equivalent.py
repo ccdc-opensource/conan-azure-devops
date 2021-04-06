@@ -26,7 +26,12 @@ jfrog_cli = 'jfrog'
 if not shutil.which(jfrog_cli):
     raise Exception(f'Please install {jfrog_cli} first')
 
-artifactory_user = os.environ['USER']
+if 'CCDC_USERNAME' in os.environ:
+    artifactory_user = os.environ['CCDC_USERNAME']
+elif 'USER' in os.environ:
+    artifactory_user = os.environ['USER']
+elif 'USERNAME' in os.environ:
+    artifactory_user = os.environ['USERNAME']
 artifactory_api_key = os.environ["ARTIFACTORY_API_KEY"]
 
 conan_env['CONAN_LOGIN_USERNAME'] = artifactory_user
@@ -35,8 +40,7 @@ conan_env['CONAN_PASSWORD'] = artifactory_api_key
 
 def run_command(args):
     print(f'Running {" ".join(args)}')
-    print(subprocess.check_output(args=args, env=conan_env).decode(errors='replace'))
-
+    print(subprocess.check_output(args=args, env=conan_env, stderr=subprocess.STDOUT).decode(errors='replace'))
 
 def run_conan(args):
     conan_args = [conan_exe] + args
@@ -52,7 +56,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         macos_deployment_target='10.13',
                         macos_xcode_version='11.7',
                         windows_bash_path=None,
-                        conan_logging_level='critical',
+                        conan_logging_level='info',
                         workaround_autotools_windows_debug_issue=False,
                         use_release_zlib_profile=False,
                         ):
@@ -238,23 +242,26 @@ def main():
         centos_yum_preinstall = []
     else:
         centos_yum_preinstall = list(args.centos_yum_preinstall)
-    build_conan_package(
-        package=args.package,
-        package_version=args.package_version,
-        local_recipe=args.local_recipe,
-        platform=args.platform,
-        build_types=build_types,
-        source_repository=args.source_repository,
-        destination_repository=args.destination_repository,
-        macos_brew_preinstall=macos_brew_preinstall,
-        centos_yum_preinstall=centos_yum_preinstall,
-        macos_deployment_target=args.macos_deployment_target,
-        macos_xcode_version=args.macos_xcode_version,
-        windows_bash_path=args.windows_bash_path,
-        conan_logging_level=args.conan_logging_level,
-        workaround_autotools_windows_debug_issue=args.workaround_autotools_windows_debug_issue,
-        use_release_zlib_profile=args.use_release_zlib_profile,
-    )
+    try:
+        build_conan_package(
+            package=args.package,
+            package_version=args.package_version,
+            local_recipe=args.local_recipe,
+            platform=args.platform,
+            build_types=build_types,
+            source_repository=args.source_repository,
+            destination_repository=args.destination_repository,
+            macos_brew_preinstall=macos_brew_preinstall,
+            centos_yum_preinstall=centos_yum_preinstall,
+            macos_deployment_target=args.macos_deployment_target,
+            macos_xcode_version=args.macos_xcode_version,
+            windows_bash_path=args.windows_bash_path,
+            conan_logging_level=args.conan_logging_level,
+            workaround_autotools_windows_debug_issue=args.workaround_autotools_windows_debug_issue,
+            use_release_zlib_profile=args.use_release_zlib_profile,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f'Last command output was {e.output.decode(errors="replace")}')
 
 
 if __name__ == "__main__":
