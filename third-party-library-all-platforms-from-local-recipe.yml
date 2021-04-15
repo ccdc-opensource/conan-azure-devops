@@ -28,6 +28,7 @@ parameters:
       - centos7_gcc10
       - ubuntu2004_gcc10
       - macos1015_xcode11
+      - macos1015_xcode12
       - win2019_vs2019
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_deployment_target
@@ -39,6 +40,9 @@ parameters:
   - name: macos_xcode_version
     type: string
     default: '11.7'
+  - name: macos_xcode12_version
+    type: string
+    default: '12.4'
   - name: centos_yum_preinstall
     type: object
     default: []
@@ -142,7 +146,7 @@ jobs:
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - job: macos1015_xcode11
     pool:
-      vmImage: "macOS-latest"
+      vmImage: "macOS-10.15"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -166,6 +170,40 @@ jobs:
           channel: ${{ parameters.channel }}
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode11-x86_64
+          build_types: ${{ parameters.build_types }}
+          destination_repository: ${{ parameters.destination_repository }}
+          macos_deployment_target: ${{ parameters.macos_deployment_target }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
+          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+
+- ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
+  - job: macos1015_xcode12
+    pool:
+      vmImage: "macOS-10.15"
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+        displayName: "Use latest python 3.8"
+      - ${{ each preinstall_pkg in parameters.macos_brew_preinstall }}: # package
+        - task: CmdLine@2
+          inputs:
+            script: "brew install ${{ preinstall_pkg }}"
+          displayName: "Brew install ${{ preinstall_pkg }}"
+      - task: CmdLine@2
+        inputs:
+          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode12_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ parameters.macos_xcode12_version }}"
+      - template: single-local-recipe-build.yml@templates
+        parameters:
+          python: 'python'
+          package: ${{ parameters.package }}
+          package_version: ${{ parameters.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
+          profile: macos-xcode12-x86_64
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
