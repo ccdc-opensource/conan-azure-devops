@@ -25,6 +25,7 @@ parameters:
     type: object
     default:
       - centos7_gcc9
+      - centos7_gcc10
       - ubuntu2004_gcc10
       - macos1015_xcode11
       - win2019_vs2019
@@ -81,6 +82,36 @@ jobs:
             user: ${{ parameters.user }}
             channel: ${{ parameters.channel }}
             profile: centos7-gcc9-x86_64
+            artifactory_api_key: ${{ parameters.artifactory_api_key }}
+            build_types:
+              - ${{ build_type }}
+            destination_repository: ${{ parameters.destination_repository }}
+            conan_logging_level: ${{ parameters.conan_logging_level }}
+            artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
+            use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+
+- ${{ if containsValue(parameters.platforms, 'centos7_gcc10') }}:
+  - ${{ each build_type in parameters.build_types }}: # Each build_type
+    - job: centos7_gcc10_${{ build_type }}
+      pool:
+        vmImage: "ubuntu-latest"
+      # We use a container to run the build as we must be compatible with centos7's older glibc
+      container: rockdreamer/centos7-gcc10:latest
+      steps:
+        # No need to setup specific python, the container's python3 will be used
+        - ${{ each preinstall_pkg in parameters.centos_yum_preinstall }}: # package
+          - task: CmdLine@2
+            inputs:
+              script: "sudo yum install -y ${{ preinstall_pkg }}"
+            displayName: "yum install ${{ preinstall_pkg }}"
+        - template: single-local-recipe-build.yml@templates
+          parameters:
+            python: 'python3'
+            package: ${{ parameters.package }}
+            package_version: ${{ parameters.package_version }}
+            user: ${{ parameters.user }}
+            channel: ${{ parameters.channel }}
+            profile: centos7-gcc10-x86_64
             artifactory_api_key: ${{ parameters.artifactory_api_key }}
             build_types:
               - ${{ build_type }}

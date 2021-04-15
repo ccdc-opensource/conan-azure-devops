@@ -6,6 +6,7 @@ import argparse
 
 all_platforms = [
     'centos7_gcc9',
+    'centos7_gcc10',
     'ubuntu2004_gcc10',
     'macos1015_xcode11',
     'macos1015_xcode12',
@@ -94,6 +95,9 @@ def build_conan_package(package, package_version, local_recipe, platform,
     if platform == 'centos7_gcc9':
         conan_profile = 'centos7-gcc9-x86_64'
         docker_container = 'rockdreamer/centos7-gcc9:latest'
+    if platform == 'centos7_gcc10':
+        conan_profile = 'centos7-gcc10-x86_64'
+        docker_container = 'rockdreamer/centos7-gcc10:latest'
     if platform == 'ubuntu2004_gcc10':
         conan_profile = 'ubuntu20-gcc10-x86_64'
         docker_container = 'rockdreamer/ubuntu20-gcc10:latest'
