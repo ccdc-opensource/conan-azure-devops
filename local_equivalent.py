@@ -57,6 +57,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         conan_logging_level='info',
                         workaround_autotools_windows_debug_issue=False,
                         use_release_zlib_profile=False,
+                        really_upload=False,
                         ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
@@ -138,8 +139,6 @@ def build_conan_package(package, package_version, local_recipe, platform,
     for build_type in build_types:
         additional_profiles = []
         if use_release_zlib_profile:
-            if 'msvc15' in conan_profile:
-                additional_profiles.append('windows-msvc15-release-zlib')
             if 'msvc16' in conan_profile:
                 additional_profiles.append('windows-msvc16-release-zlib')
 
@@ -186,12 +185,13 @@ def build_conan_package(package, package_version, local_recipe, platform,
             ]
             run_conan(conan_test_args)
 
-    run_conan([
-        'upload',
-        f'{package}/{package_version}',
-        '--all',
-        f'--remote={ destination_repository }',
-    ])
+    if really_upload:
+        run_conan([
+            'upload',
+            f'{package}/{package_version}',
+            '--all',
+            f'--remote={ destination_repository }',
+        ])
 
 
 def main():
@@ -224,11 +224,13 @@ def main():
                         help='', action='store_true')
     parser.add_argument(
         '--local-recipe', help='directory that contains conanfile.py')
+    parser.add_argument(
+        '--really-upload', help='really upload to artifactory', action='store_true')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
     else:
-        build_types = list(args.build_types),
+        build_types = [x for x in args.build_types]
     if not args.macos_brew_preinstall:
         macos_brew_preinstall = []
     else:
@@ -254,6 +256,7 @@ def main():
             conan_logging_level=args.conan_logging_level,
             workaround_autotools_windows_debug_issue=args.workaround_autotools_windows_debug_issue,
             use_release_zlib_profile=args.use_release_zlib_profile,
+            really_upload=args.really_upload,
         )
     except subprocess.CalledProcessError as e:
         print(f'Last command output was {e.output.decode(errors="replace")}')
