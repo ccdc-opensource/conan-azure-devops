@@ -27,10 +27,7 @@ parameters:
       - centos7_gcc9
       - ubuntu2004_gcc10
       - macos1015_xcode11
-      - win2016_vs2017
       - win2019_vs2019
-      # - win2016_vs2017_x86
-      # - win2019_vs2019_x86
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_deployment_target
     type: string
@@ -147,36 +144,7 @@ jobs:
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
 
-- ${{ if and( containsValue(parameters.platforms, 'win2016_vs2017'), not(containsValue(parameters.platforms, 'x86')) ) }}:
-  - job: win2016_vs2017
-    pool:
-      vmImage: "vs2017-win2016"
-    steps:
-      - template: remove-interfering-tools-on-windows.yml@templates
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: "3.8"
-        displayName: "Use latest python 3.8"
-
-      - template: add-missing-certificates-on-windows.yml@templates
-
-      - template: single-local-recipe-build.yml@templates
-        parameters:
-          python: 'python'
-          package: ${{ parameters.package }}
-          package_version: ${{ parameters.package_version }}
-          user: ${{ parameters.user }}
-          channel: ${{ parameters.channel }}
-          artifactory_api_key: ${{ parameters.artifactory_api_key }}
-          profile: windows-msvc15-amd64
-          build_types: ${{ parameters.build_types }}
-          destination_repository: ${{ parameters.destination_repository }}
-          conan_logging_level: ${{ parameters.conan_logging_level }}
-          workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
-          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
-          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-
-- ${{ if and( containsValue(parameters.platforms, 'win2019_vs2019'), not(containsValue(parameters.platforms, 'x86')) ) }}:
+- ${{ if containsValue(parameters.platforms, 'win2019_vs2019') }}:
   - job: win2019_vs2019
     pool:
       vmImage: "windows-2019"
@@ -195,58 +163,6 @@ jobs:
           channel: ${{ parameters.channel }}
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: windows-msvc16-amd64
-          build_types: ${{ parameters.build_types }}
-          destination_repository: ${{ parameters.destination_repository }}
-          conan_logging_level: ${{ parameters.conan_logging_level }}
-          workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
-          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
-          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-
-- ${{ if containsValue(parameters.platforms, 'win2016_vs2017_x86') }}:
-  - job: win2016_vs2017_x86
-    pool:
-      vmImage: "vs2017-win2016"
-    steps:
-      - template: remove-interfering-tools-on-windows.yml@templates
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: "3.8"
-        displayName: "Use latest python 3.8"
-      - template: single-local-recipe-build.yml@templates
-        parameters:
-          python: 'python'
-          package: ${{ parameters.package }}
-          package_version: ${{ parameters.package_version }}
-          user: ${{ parameters.user }}
-          channel: ${{ parameters.channel }}
-          artifactory_api_key: ${{ parameters.artifactory_api_key }}
-          profile: windows-msvc15-x86
-          build_types: ${{ parameters.build_types }}
-          destination_repository: ${{ parameters.destination_repository }}
-          conan_logging_level: ${{ parameters.conan_logging_level }}
-          workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
-          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
-          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-
-- ${{ if containsValue(parameters.platforms, 'win2019_vs2019_x86') }}:
-  - job: win2019_vs2019_x86
-    pool:
-      vmImage: "windows-2019"
-    steps:
-      - template: remove-interfering-tools-on-windows.yml@templates
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: "3.8"
-        displayName: "Use latest python 3.8"
-      - template: single-local-recipe-build.yml@templates
-        parameters:
-          python: 'python'
-          package: ${{ parameters.package }}
-          package_version: ${{ parameters.package_version }}
-          user: ${{ parameters.user }}
-          channel: ${{ parameters.channel }}
-          artifactory_api_key: ${{ parameters.artifactory_api_key }}
-          profile: windows-msvc16-x86
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           conan_logging_level: ${{ parameters.conan_logging_level }}

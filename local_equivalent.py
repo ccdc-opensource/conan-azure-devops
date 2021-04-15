@@ -10,10 +10,7 @@ all_platforms = [
     'macos1015_xcode11',
     'macos1015_xcode12',
     'macos11_xcode12_arm',
-    'win2016_vs2017',
     'win2019_vs2019',
-    'win2016_vs2017_x86',
-    'win2019_vs2019_x86',
     'win2019_msys',  # (this is used for building a few buildtools)
 ]
 
@@ -108,14 +105,8 @@ def build_conan_package(package, package_version, local_recipe, platform,
     if platform == 'macos11_xcode12_arm':
         conan_profile = 'macos-xcode12-armv8'
 
-    if platform == 'win2016_vs2017':
-        conan_profile = 'windows-msvc15-amd64'
     if platform == 'win2019_vs2019':
         conan_profile = 'windows-msvc16-amd64'
-    if platform == 'win2016_vs2017_x86':
-        conan_profile = 'windows-msvc15-x86'
-    if platform == 'win2019_vs2019_x86':
-        conan_profile = 'windows-msvc16-x86'
     if platform == 'win2019_msys':
         conan_profile = 'windows-msys-amd64'
 
