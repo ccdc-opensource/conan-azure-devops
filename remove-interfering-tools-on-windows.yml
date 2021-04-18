@@ -70,3 +70,10 @@ steps:
           Remove-Item "$env:ChocolateyInstall\bin\$chocoexe" -Force
         }
       }
+
+- task: PowerShell@2
+  displayName: "Remove older windows SDKs"
+  inputs:
+    targetType: 'inline'
+    script: |
+      Get-Package -Name 'Windows SDK' -MaximumVersion '10.1.19040' | Uninstall-Package
