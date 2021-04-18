@@ -76,4 +76,9 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Get-Package -Name 'Windows SDK' -MaximumVersion '10.1.19040' | Uninstall-Package
+      $oldsdks = ('10.0.17763.0')
+      foreach($oldsdk in $oldsdks) {
+        if (Test-Path "C:\Program Files (x86)\Windows Kits\10\Include\$oldsdk") {
+          Move-Item "C:\Program Files (x86)\Windows Kits\10\Include\$oldsdk" -Destination "C:\removed-$oldsdk" -Force
+        }
+      }
