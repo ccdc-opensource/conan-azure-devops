@@ -38,7 +38,7 @@ conan_env['CONAN_PASSWORD'] = artifactory_api_key
 
 def run_command(args):
     print(f'Running {" ".join(args)}')
-    print(subprocess.check_output(args=args, env=conan_env, stderr=subprocess.STDOUT).decode(errors='replace'))
+    subprocess.run(args=args, env=conan_env)
 
 def run_conan(args):
     conan_args = [conan_exe] + args
