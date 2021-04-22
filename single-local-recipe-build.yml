@@ -118,8 +118,6 @@ steps:
         additional_profiles = []
 
         if use_release_zlib_profile:
-          if 'msvc15' in profile:
-            additional_profiles.append('windows-msvc15-release-zlib')
           if 'msvc16' in profile:
             additional_profiles.append('windows-msvc16-release-zlib')
 
@@ -132,13 +130,10 @@ steps:
       conanCommand: 'Install'
       pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
       # We build a single package, on purpose, dependencies must be tracked and obtained from the destination repository
-      ${{ if contains(parameters.profile, 'windows') }}:
-        ${{ if eq(build_type, 'Debug') }}:
-          extraArguments: '--profile ${{ parameters.profile }}-debug $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
-        ${{ if ne(build_type, 'Debug') }}:
-          extraArguments: '--profile ${{ parameters.profile }}-release $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
-      ${{ if not(contains(parameters.profile, 'windows')) }}:
-        extraArguments: '--profile ${{ parameters.profile }} $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      ${{ if eq(build_type, 'Debug') }}:
+        extraArguments: '--profile ${{ parameters.profile }}-debug $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      ${{ if ne(build_type, 'Debug') }}:
+        extraArguments: '--profile ${{ parameters.profile }}-release $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
@@ -165,13 +160,10 @@ steps:
     displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'
     inputs:
       conanCommand: 'Custom'
-      ${{ if contains(parameters.profile, 'windows') }}:
-        ${{ if eq(build_type, 'Debug') }}:
-          customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-debug $(additional_profiles) -s build_type=${{ build_type }}'
-        ${{ if ne(build_type, 'Debug') }}:
-          customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-release $(additional_profiles) -s build_type=${{ build_type }}'
-      ${{ if not(contains(parameters.profile, 'windows')) }}:
-        customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }} $(additional_profiles) -s build_type=${{ build_type }}'
+      ${{ if eq(build_type, 'Debug') }}:
+        customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-debug $(additional_profiles) -s build_type=${{ build_type }}'
+      ${{ if ne(build_type, 'Debug') }}:
+        customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-release $(additional_profiles) -s build_type=${{ build_type }}'
       buildName: '$(Build.DefinitionName)'
       buildNumber: '$(Build.BuildNumber)'
       conanUserHome: '$(Pipeline.Workspace)/.conan'
