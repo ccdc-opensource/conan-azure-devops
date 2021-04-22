@@ -146,13 +146,10 @@ def build_conan_package(package, package_version, local_recipe, platform,
             'install',
             f'{package}/{package_version}',
         ]
-        if 'windows' in conan_profile:
-            if build_type == 'Debug':
-                conan_install_args += ['--profile', f'{conan_profile}-debug']
-            else:
-                conan_install_args += ['--profile', f'{conan_profile}-release']
+        if build_type == 'Debug':
+            conan_install_args += ['--profile', f'{conan_profile}-debug']
         else:
-            conan_install_args += ['--profile', conan_profile]
+            conan_install_args += ['--profile', f'{conan_profile}-release']
         for additional_profile in additional_profiles:
             conan_install_args += ['--profile', additional_profile]
         conan_install_args += [
