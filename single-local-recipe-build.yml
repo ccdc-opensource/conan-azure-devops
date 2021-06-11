@@ -1,0 +1,184 @@
+parameters:
+  - name: python
+    type: string
+  - name: package
+    type: string
+  - name: package_version
+    type: string
+  - name: user
+    type: string
+  - name: channel
+    type: string
+  - name: profile
+    type: string
+  - name: build_types
+    type: object
+  - name: destination_repository
+    type: string
+  - name: artifactory_api_key
+    type: string
+  - name: macos_deployment_target
+    type: string
+    default: 'NOT VALID UNLESS SET, ONLY USED BY MACOS BUILDS'
+  - name: windows_bash_path
+    type: string
+    default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
+  - name: conan_logging_level
+    type: string
+  # see https://github.com/conan-io/conan/issues/6514
+  - name: workaround_autotools_windows_debug_issue
+    type: boolean
+    default: false
+  - name: artifactory_service_connection
+    type: string
+    default: 'devops-ccdc-3rd-party'
+  - name: use_release_zlib_profile
+    type: boolean
+    default: false
+
+steps:
+- script: ${{ parameters.python }} -m pip install --upgrade conan
+  displayName: 'Install conan'
+
+# This hack is required to get some packages to build. Particularly the ones that
+# require use of the msys2 package in a specific configurations. Microsoft hosted agents
+# insert git paths that contain bash executables, which interfere with the process.
+- task: PythonScript@0
+  displayName: Get path without git paths
+  inputs:
+    scriptSource: 'inline'
+    pythonInterpreter: ${{ parameters.python }}
+    script: |
+      import os
+      path_without_git_bash = os.pathsep.join([ x for x in os.environ['PATH'].split(os.pathsep) if 'Git' not in x])
+      print(f'##vso[task.setvariable variable=path_without_git_bash;]{path_without_git_bash}')
+      print('Path without git paths:')
+      for pi in path_without_git_bash.split(os.pathsep):
+          print(f'  - {pi}')
+
+- task: ArtifactoryGenericDownload@3
+  displayName: 'Download configuration'
+  inputs:
+    connection: ${{ parameters.artifactory_service_connection }}
+    specSource: 'taskConfiguration'
+    fileSpec: |
+      {
+        "files": [
+          {
+            "pattern": "ccdc-conan-metadata/common-3rdparty-config.zip",
+            "target": "$(Pipeline.Workspace)/.conan/"
+          }
+        ]
+      }
+    failNoOp: true
+
+- task: ArtifactoryConan@1
+  displayName: 'Install configuration'
+  inputs:
+    conanCommand: 'Config Install'
+    configSourceType: 'zip'
+    configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
+- task: ArtifactoryConan@1
+  displayName: 'Use ${{ parameters.destination_repository }}'
+  inputs:
+    conanCommand: 'Add Remote'
+    remoteName: '${{ parameters.destination_repository }}'
+    artifactoryService: ${{ parameters.artifactory_service_connection }}
+    conanRepo: '${{ parameters.destination_repository }}'
+    purgeExistingRemotes: true
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
+- task: ArtifactoryConan@1
+  displayName: 'Export ${{ parameters.package }}/${{ parameters.package_version }}@'
+  inputs:
+    conanCommand: 'Custom'
+    customArguments: 'export . ${{ parameters.package_version }}@'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
+- ${{ each build_type in parameters.build_types }}: # Each build_type
+  - task: PythonScript@0
+    displayName: Get additional profiles required by build
+    inputs:
+      scriptSource: 'inline'
+      pythonInterpreter: ${{ parameters.python }}
+      script: |
+        use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
+        profile = '${{ parameters.profile }}'
+        build_type = '${{ build_type }}'
+        additional_profiles = []
+
+        if use_release_zlib_profile:
+          if 'msvc16' in profile:
+            additional_profiles.append('windows-msvc16-release-zlib')
+
+        value = ' '.join([f'--profile {p}' for p in additional_profiles])
+        print(f'##vso[task.setvariable variable=additional_profiles;]{value}')
+
+  - task: ArtifactoryConan@1
+    displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
+    inputs:
+      conanCommand: 'Install'
+      pathOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+      # We build a single package, on purpose, dependencies must be tracked and obtained from the destination repository
+      ${{ if eq(build_type, 'Debug') }}:
+        extraArguments: '--profile ${{ parameters.profile }}-debug $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      ${{ if ne(build_type, 'Debug') }}:
+        extraArguments: '--profile ${{ parameters.profile }}-release $(additional_profiles) --remote=${{ parameters.destination_repository }} --build=${{ parameters.package }} -s build_type=${{ build_type }}'
+      buildName: '$(Build.DefinitionName)'
+      buildNumber: '$(Build.BuildNumber)'
+      conanUserHome: '$(Pipeline.Workspace)/.conan'
+    ${{ if contains(parameters.profile, 'macos') }}:
+      env:
+        MACOSX_DEPLOYMENT_TARGET: '${{ parameters.macos_deployment_target }}'
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+    ${{ if contains(parameters.profile, 'windows') }}:
+      env:
+        ${{ if and( eq(parameters.workaround_autotools_windows_debug_issue, true), contains(build_type, 'Deb') ) }}:
+          CONAN_CPU_COUNT: '1'
+        ${{ if not(contains(parameters.windows_bash_path, 'NOT VALID')) }}:
+          CONAN_BASH_PATH: '${{ parameters.windows_bash_path }}'
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+        PATH: '$(path_without_git_bash)'
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+    ${{ if or(contains(parameters.profile, 'ubuntu'), contains(parameters.profile, 'centos')) }}:
+      env:
+        ARTIFACTORY_API_KEY: ${{ parameters.artifactory_api_key }}
+        CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
+  - task: ArtifactoryConan@1
+    displayName: 'Test ${{ parameters.package }}/${{ parameters.package_version }}@'
+    inputs:
+      conanCommand: 'Custom'
+      ${{ if eq(build_type, 'Debug') }}:
+        customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-debug $(additional_profiles) -s build_type=${{ build_type }}'
+      ${{ if ne(build_type, 'Debug') }}:
+        customArguments: 'test test_package ${{ parameters.package }}/${{ parameters.package_version }}@ --profile ${{ parameters.profile }}-release $(additional_profiles) -s build_type=${{ build_type }}'
+      buildName: '$(Build.DefinitionName)'
+      buildNumber: '$(Build.BuildNumber)'
+      conanUserHome: '$(Pipeline.Workspace)/.conan'
+    env:
+      CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
+- task: ArtifactoryConan@1
+  displayName: 'Upload ${{ parameters.package }}/${{ parameters.package_version }}@'
+  inputs:
+    conanCommand: 'Upload'
+    patternOrReference: '${{ parameters.package }}/${{ parameters.package_version }}@'
+    extraArguments: '--all --remote=${{ parameters.destination_repository }}'
+    buildName: '$(Build.DefinitionName)'
+    buildNumber: '$(Build.BuildNumber)'
+    conanUserHome: '$(Pipeline.Workspace)/.conan'
+  env:
+    CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
+
