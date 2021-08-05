@@ -118,7 +118,7 @@ steps:
         use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
         profile = '${{ parameters.profile }}'
         build_type = '${{ build_type }}'
-        additional_profiles = ','.split('${{ parameters.additional_profiles_for_all_platforms }}')
+        additional_profiles = '${{ parameters.additional_profiles_for_all_platforms }}'.split(',')
 
         if use_release_zlib_profile:
           if 'msvc16' in profile:
