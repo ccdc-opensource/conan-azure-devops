@@ -62,6 +62,9 @@ parameters:
   - name: use_release_zlib_profile
     type: boolean
     default: false
+  - name: additional_profiles_for_all_platforms
+    type: string
+    default: ''
 
 jobs:
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
@@ -93,6 +96,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc10') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -123,6 +127,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'ubuntu2004_gcc10') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -148,6 +153,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -184,6 +190,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -220,6 +227,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -248,6 +256,7 @@ jobs:
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_msys') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -276,3 +285,4 @@ jobs:
             workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}

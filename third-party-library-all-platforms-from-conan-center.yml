@@ -62,6 +62,9 @@ parameters:
   - name: use_release_zlib_profile
     type: boolean
     default: false
+  - name: additional_profiles_for_all_platforms
+    type: string
+    default: ''
 
 variables:
   ${{ if not(contains(parameters.package_version, '@')) }}:
@@ -97,6 +100,7 @@ jobs:
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc10') }}:
   - job: centos7_gcc10
@@ -125,6 +129,7 @@ jobs:
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'ubuntu2004_gcc10') }}:
   - job: ubuntu2004_gcc10
@@ -148,6 +153,7 @@ jobs:
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - job: macos1015_xcode11
@@ -182,6 +188,7 @@ jobs:
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
   - job: macos1015_xcode12
@@ -216,6 +223,7 @@ jobs:
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_vs2019') }}:
   - job: win2019_vs2019
@@ -242,6 +250,7 @@ jobs:
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'win2019_msys') }}:
   - job: win2019_msys
@@ -268,3 +277,4 @@ jobs:
           workaround_autotools_windows_debug_issue: ${{ parameters.workaround_autotools_windows_debug_issue }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}

@@ -35,6 +35,9 @@ parameters:
   - name: use_release_zlib_profile
     type: boolean
     default: false
+  - name: additional_profiles_for_all_platforms
+    type: string
+    default: ''
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -115,7 +118,7 @@ steps:
         use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
         profile = '${{ parameters.profile }}'
         build_type = '${{ build_type }}'
-        additional_profiles = []
+        additional_profiles = ','.split('${{ parameters.additional_profiles_for_all_platforms }}')
 
         if use_release_zlib_profile:
           if 'msvc16' in profile:

@@ -57,6 +57,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         conan_logging_level='info',
                         workaround_autotools_windows_debug_issue=False,
                         use_release_zlib_profile=False,
+                        additional_profiles_for_all_platforms=[],
                         really_upload=False,
                         ):
 
@@ -138,6 +139,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
 
     for build_type in build_types:
         additional_profiles = []
+        additional_profiles.extend(additional_profiles_for_all_platforms)
         if use_release_zlib_profile:
             if 'msvc16' in conan_profile:
                 additional_profiles.append('windows-msvc16-release-zlib')
@@ -215,6 +217,8 @@ def main():
         '--workaround-autotools-windows-debug-issue', help='', action='store_true')
     parser.add_argument('--use-release-zlib-profile',
                         help='', action='store_true')
+    parser.add_argument('--additional-profiles-for-all-platforms',
+                        help='Use additional profiles', action='append')
     parser.add_argument(
         '--local-recipe', help='directory that contains conanfile.py')
     parser.add_argument(
