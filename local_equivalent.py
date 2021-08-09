@@ -236,6 +236,10 @@ def main():
         centos_yum_preinstall = []
     else:
         centos_yum_preinstall = list(args.centos_yum_preinstall)
+    if not args.additional_profiles_for_all_platforms:
+        additional_profiles_for_all_platforms = []
+    else:
+        additional_profiles_for_all_platforms = list(args.additional_profiles_for_all_platforms)
     try:
         build_conan_package(
             package=args.package,
@@ -253,6 +257,7 @@ def main():
             conan_logging_level=args.conan_logging_level,
             workaround_autotools_windows_debug_issue=args.workaround_autotools_windows_debug_issue,
             use_release_zlib_profile=args.use_release_zlib_profile,
+            additional_profiles_for_all_platforms=additional_profiles_for_all_platforms,
             really_upload=args.really_upload,
         )
     except subprocess.CalledProcessError as e:
