@@ -126,7 +126,10 @@ steps:
 
         additional_profiles_for_all_platforms = '${{ parameters.additional_profiles_for_all_platforms }}'
         print(f'additional_profiles_for_all_platforms={additional_profiles_for_all_platforms}')
-        additional_profiles = additional_profiles_for_all_platforms.split(',')
+        if additional_profiles_for_all_platforms:
+          additional_profiles = additional_profiles_for_all_platforms.split(',')
+        else:
+          additional_profiles = []
 
         if use_release_zlib_profile:
           if 'msvc16' in profile:
