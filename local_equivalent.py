@@ -39,6 +39,7 @@ def run_command(args):
     print(f'Running {" ".join(args)}')
     subprocess.run(args=args, env=conan_env)
 
+
 def run_conan(args):
     conan_args = [conan_exe] + args
     run_command(conan_args)
@@ -58,7 +59,8 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         use_release_zlib_profile=False,
                         additional_profiles_for_all_platforms=[],
                         really_upload=False,
-                        require_overrides=[]
+                        require_overrides=[],
+                        configuration_branch='main',
                         ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
@@ -116,7 +118,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
     run_conan([
         'config',
         'install',
-        f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config.zip'
+        f'https://github.com/ccdc-opensource/conan-ccdc-common-configuration/archive/refs/heads/{configuration_branch}.zip'
     ])
 
     if local_recipe:
@@ -224,6 +226,8 @@ def main():
         '--really-upload', help='really upload to artifactory', action='store_true')
     parser.add_argument('--require-override',
                         help='override requirements for specific package', action='append')
+    parser.add_argument('--configuration-branch',
+                        help='Branch of ccdc-opensource/conan-ccdc-common-configuration to use', default='main')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
@@ -240,7 +244,8 @@ def main():
     if not args.additional_profiles_for_all_platforms:
         additional_profiles_for_all_platforms = []
     else:
-        additional_profiles_for_all_platforms = list(args.additional_profiles_for_all_platforms)
+        additional_profiles_for_all_platforms = list(
+            args.additional_profiles_for_all_platforms)
     if not args.require_override:
         require_overrides = []
     else:
@@ -264,7 +269,8 @@ def main():
             use_release_zlib_profile=args.use_release_zlib_profile,
             additional_profiles_for_all_platforms=additional_profiles_for_all_platforms,
             really_upload=args.really_upload,
-            require_overrides=require_overrides
+            require_overrides=require_overrides,
+            configuration_branch=args.configuration_branch,
         )
     except subprocess.CalledProcessError as e:
         print(f'Last command output was {e.output.decode(errors="replace")}')
