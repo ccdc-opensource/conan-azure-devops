@@ -194,7 +194,7 @@ def main():
     parser.add_argument('package_version',
                         help='the version of the conan package')
     parser.add_argument(
-        '--platform', help='the version of the conan package', choices=all_platforms)
+        '--platform', help='the platform to build for', required=True, choices=all_platforms)
     parser.add_argument('--build-types', help='well, build types',
                         action='append', choices=['Release', 'Debug', 'RelWithDebInfo'])
     parser.add_argument('--source-repository',
