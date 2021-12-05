@@ -24,7 +24,6 @@ parameters:
   - name: platforms
     type: object
     default:
-      - centos7_gcc9
       - centos7_gcc10
       - ubuntu2004_gcc10
       - macos1015_xcode11
@@ -73,35 +72,6 @@ variables:
     package_version: "${{ parameters.package_version }}"
 
 jobs:
-- ${{ if containsValue(parameters.platforms, 'centos7_gcc9') }}:
-  - job: centos7_gcc9
-    pool:
-      vmImage: "ubuntu-latest"
-    # We use a container to run the build as we must be compatible with centos7's older glibc
-    container: rockdreamer/centos7-gcc9:latest
-    steps:
-      # No need to setup specific python, the container's python3 will be used
-      - ${{ each preinstall_pkg in parameters.centos_yum_preinstall }}: # package
-        - task: CmdLine@2
-          inputs:
-            script: "sudo yum install -y ${{ preinstall_pkg }}"
-          displayName: "yum install ${{ preinstall_pkg }}"
-      - template: single-build.yml@templates
-        parameters:
-          python: 'python3'
-          package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
-          user: ${{ parameters.user }}
-          channel: ${{ parameters.channel }}
-          profile: centos7-gcc9-x86_64
-          build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
-          destination_repository: ${{ parameters.destination_repository }}
-          conan_logging_level: ${{ parameters.conan_logging_level }}
-          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
-          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
-
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc10') }}:
   - job: centos7_gcc10
     pool:
