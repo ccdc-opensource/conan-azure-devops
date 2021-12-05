@@ -59,6 +59,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         use_release_zlib_profile=False,
                         additional_profiles_for_all_platforms=[],
                         really_upload=False,
+                        require_overrides=[]
                         ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
@@ -160,6 +161,8 @@ def build_conan_package(package, package_version, local_recipe, platform,
             '-s',
             f'build_type={ build_type }',
         ]
+        for override in require_overrides:
+            conan_install_args += ['--require-override', override]
         run_conan(conan_install_args)
 
         if local_recipe:
@@ -223,6 +226,8 @@ def main():
         '--local-recipe', help='directory that contains conanfile.py')
     parser.add_argument(
         '--really-upload', help='really upload to artifactory', action='store_true')
+    parser.add_argument('--require-override',
+                        help='override requirements for specific package', action='append')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
@@ -240,6 +245,10 @@ def main():
         additional_profiles_for_all_platforms = []
     else:
         additional_profiles_for_all_platforms = list(args.additional_profiles_for_all_platforms)
+    if not args.require_override:
+        require_overrides = []
+    else:
+        require_overrides = list(args.require_override)
     try:
         build_conan_package(
             package=args.package,
@@ -259,6 +268,7 @@ def main():
             use_release_zlib_profile=args.use_release_zlib_profile,
             additional_profiles_for_all_platforms=additional_profiles_for_all_platforms,
             really_upload=args.really_upload,
+            require_overrides=require_overrides
         )
     except subprocess.CalledProcessError as e:
         print(f'Last command output was {e.output.decode(errors="replace")}')
