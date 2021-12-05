@@ -9,7 +9,7 @@ all_platforms = [
     'ubuntu2004_gcc10',
     'macos1015_xcode11',
     'macos1015_xcode12',
-    'macos11_xcode12_arm',
+    'macos11_xcode13_arm',
     'win2019_vs2019',
     'win2019_msys',  # (this is used for building a few buildtools)
 ]
@@ -52,7 +52,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         macos_brew_preinstall=[],
                         centos_yum_preinstall=[],
                         macos_deployment_target='10.13',
-                        macos_xcode_version='12.4',
+                        macos_xcode_version=None,
                         windows_bash_path=None,
                         conan_logging_level='info',
                         workaround_autotools_windows_debug_issue=False,
@@ -107,8 +107,8 @@ def build_conan_package(package, package_version, local_recipe, platform,
         conan_profile = 'macos-xcode11-x86_64'
     if platform == 'macos1015_xcode12':
         conan_profile = 'macos-xcode12-x86_64'
-    if platform == 'macos11_xcode12_arm':
-        conan_profile = 'macos-xcode12-armv8'
+    if platform == 'macos11_xcode13_arm':
+        conan_profile = 'macos-xcode13-armv8'
 
     if platform == 'win2019_vs2019':
         conan_profile = 'windows-msvc16-amd64'
