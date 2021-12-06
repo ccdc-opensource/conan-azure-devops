@@ -122,7 +122,11 @@ def build_conan_package(package, package_version, local_recipe, platform,
     run_conan([
         'config',
         'install',
-        f'https://github.com/ccdc-opensource/conan-ccdc-common-configuration/archive/refs/heads/{configuration_branch}.zip'
+        'https://github.com/ccdc-opensource/conan-ccdc-common-configuration.git',
+        '--type',
+        'git',
+        '--args',
+        f'-b {configuration_branch}'
     ])
 
     if local_recipe:
