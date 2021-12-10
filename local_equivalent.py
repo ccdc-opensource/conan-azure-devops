@@ -158,9 +158,9 @@ def build_conan_package(package, package_version, local_recipe, platform,
             f'{package}/{package_version}',
         ]
         if build_type == 'Debug':
-            conan_install_args += ['--profile', f'{conan_profile}-debug']
+            conan_install_args += ['--profile:build', f'{conan_profile}-release', '--profile:host', f'{conan_profile}-debug']
         else:
-            conan_install_args += ['--profile', f'{conan_profile}-release']
+            conan_install_args += ['--profile:build', f'{conan_profile}-release', '--profile:host', f'{conan_profile}-release']
         for additional_profile in additional_profiles:
             conan_install_args += ['--profile', additional_profile]
         conan_install_args += [
@@ -284,7 +284,7 @@ def main():
         )
     except subprocess.CalledProcessError as e:
         if e.output:
-        print(f'Last command output was {e.output.decode(errors="replace")}')
+            print(f'Last command output was {e.output.decode(errors="replace")}')
         sys.exit(1)
 
 
