@@ -3,6 +3,8 @@ import os
 import shutil
 import subprocess
 import argparse
+import sys
+
 
 all_platforms = [
     'centos7_gcc10',
@@ -281,7 +283,9 @@ def main():
             configuration_branch=args.configuration_branch,
         )
     except subprocess.CalledProcessError as e:
+        if e.output:
         print(f'Last command output was {e.output.decode(errors="replace")}')
+        sys.exit(1)
 
 
 if __name__ == "__main__":
