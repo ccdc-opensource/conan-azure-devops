@@ -69,6 +69,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         really_upload=False,
                         require_overrides=[],
                         configuration_branch='main',
+                        configuration_local_directory=None,
                         ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
@@ -126,6 +127,13 @@ def build_conan_package(package, package_version, local_recipe, platform,
     if platform == 'win2019_msys':
         conan_profile = 'windows-msys-amd64'
 
+    if configuration_local_directory:
+        run_conan([
+            'config',
+            'install',
+            configuration_local_directory,
+        ])
+    else:
     run_conan([
         'config',
         'install',
@@ -243,6 +251,8 @@ def main():
                         help='override requirements for specific package', action='append')
     parser.add_argument('--configuration-branch',
                         help='Branch of ccdc-opensource/conan-ccdc-common-configuration to use', default='main')
+    parser.add_argument('--configuration-local-directory',
+                        help='checkout of ccdc-opensource/conan-ccdc-common-configuration to use')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
@@ -286,6 +296,7 @@ def main():
             really_upload=args.really_upload,
             require_overrides=require_overrides,
             configuration_branch=args.configuration_branch,
+            configuration_local_directory=args.configuration_local_directory,
         )
     except subprocess.CalledProcessError as e:
         if e.output:
