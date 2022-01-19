@@ -37,6 +37,11 @@ artifactory_api_key = os.environ["ARTIFACTORY_API_KEY"]
 conan_env['CONAN_LOGIN_USERNAME'] = artifactory_user
 conan_env['CONAN_PASSWORD'] = artifactory_api_key
 
+original_path = os.environ['PATH']
+if '/opt/homebrew/bin' in original_path:
+    conan_env['PATH'] = original_path.replace('/opt/homebrew/bin', '/opt/homebrew/opt/cmake/bin')
+if '/usr/local/bin' in original_path:
+    conan_env['PATH'] = original_path.replace('/usr/local/bin', '/usr/local/opt/cmake/bin')
 
 def run_command(args):
     print(f'Running {" ".join(args)}')
