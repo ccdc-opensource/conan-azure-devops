@@ -107,25 +107,33 @@ def build_conan_package(package, package_version, local_recipe, platform,
 
     if platform == 'centos7_gcc10':
         conan_profile = 'centos7-gcc10-x86_64'
+        conan_build_profile = 'centos7-gcc10-x86_64-release'
         docker_container = 'rockdreamer/centos7-gcc10:latest'
     if platform == 'ubuntu2004_gcc10':
         conan_profile = 'ubuntu20-gcc10-x86_64'
+        conan_build_profile = 'ubuntu20-gcc10-x86_64-release'
         docker_container = 'rockdreamer/ubuntu20-gcc10:latest'
     if platform == 'debian_bullseye_gcc10_armv7hf':
         conan_profile = 'bullseye-gcc10-armv7hf'
+        conan_build_profile = 'bullseye-gcc10-armv7hf-release'
         docker_container = 'rockdreamer/bullseye-gcc10:latest'
 
     if platform == 'macos1015_xcode11':
         conan_profile = 'macos-xcode11-x86_64'
+        conan_build_profile = 'macos-xcode11-x86_64-release'
     if platform == 'macos1015_xcode12':
         conan_profile = 'macos-xcode12-x86_64'
+        conan_build_profile = 'macos-xcode12-x86_64-release'
     if platform == 'macos11_xcode13_arm':
         conan_profile = 'macos-xcode13-armv8'
+        conan_build_profile = 'build-on-macos-xcode13-armv8-for-macos-xcode13-armv8'
 
     if platform == 'win2019_vs2019':
         conan_profile = 'windows-msvc16-amd64'
+        conan_build_profile = 'windows-msvc16-amd64-release'
     if platform == 'win2019_msys':
         conan_profile = 'windows-msys-amd64'
+        conan_build_profile = 'windows-msys-amd64-release'
 
     if configuration_local_directory:
         run_conan([
@@ -134,15 +142,15 @@ def build_conan_package(package, package_version, local_recipe, platform,
             configuration_local_directory,
         ])
     else:
-    run_conan([
-        'config',
-        'install',
-        'https://github.com/ccdc-opensource/conan-ccdc-common-configuration.git',
-        '--type',
-        'git',
-        '--args',
-        f'-b {configuration_branch}'
-    ])
+        run_conan([
+            'config',
+            'install',
+            'https://github.com/ccdc-opensource/conan-ccdc-common-configuration.git',
+            '--type',
+            'git',
+            '--args',
+            f'-b {configuration_branch}'
+        ])
 
     if local_recipe:
         run_conan([
@@ -170,10 +178,11 @@ def build_conan_package(package, package_version, local_recipe, platform,
             'install',
             f'{package}/{package_version}',
         ]
+
         if build_type == 'Debug':
-            conan_install_args += ['--profile:build', f'{conan_profile}-release', '--profile:host', f'{conan_profile}-debug']
+            conan_install_args += ['--profile:build', f'{conan_build_profile}', '--profile:host', f'{conan_profile}-debug']
         else:
-            conan_install_args += ['--profile:build', f'{conan_profile}-release', '--profile:host', f'{conan_profile}-release']
+            conan_install_args += ['--profile:build', f'{conan_build_profile}', '--profile:host', f'{conan_profile}-release']
         for additional_profile in additional_profiles:
             conan_install_args += ['--profile', additional_profile]
         conan_install_args += [
