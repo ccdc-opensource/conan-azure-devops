@@ -18,9 +18,9 @@ all_platforms = [
 ]
 
 conan_env = dict(os.environ)
-conan_exe = 'conan'
-if not shutil.which(conan_exe):
-    raise Exception(f'Please install {conan_exe} first')
+conan_exe = shutil.which('conan')
+if not conan_exe:
+    raise Exception(f'Please install conan first')
 
 jfrog_cli = 'jfrog'
 if not shutil.which(jfrog_cli):
