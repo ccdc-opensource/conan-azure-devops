@@ -41,7 +41,13 @@ set -e
 
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment harfbuzz 3.2.0
 
+
+./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment \
+  --local-recipe=../conan-ccdcsqlite3 \
+ccdcsqlite3 3.37.2
+
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment sqlite3 3.37.2
+
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment opengl system
 
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment \
@@ -57,14 +63,15 @@ cmake 3.22.0
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment automake 1.16.4
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment libtool 2.4.6
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment libuuid 1.0.3
+
 ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment \
    --require-override 'expat/2.4.3@' \
  fontconfig 2.13.93
-./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment icu 70.1
-time ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment --configuration-local-directory ../conan-ccdc-common-configuration \
-  --local-recipe=../conan-center-index/recipes/qt/6.x.x \
-  qt 6.2.2
 
-./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment --configuration-local-directory ../conan-ccdc-common-configuration \
+./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment icu 70.1
+
+./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment nodejs 16.3.0
+
+time ./local_equivalent.py --platform macos11_xcode13_arm --build-types Release --additional-profiles-for-all-platforms qt-options-macos --configuration-branch=qt_experiment --configuration-local-directory ../conan-ccdc-common-configuration \
   --local-recipe=../conan-qt \
-  qttestpkg 0.1
+  qt 5.15.8
