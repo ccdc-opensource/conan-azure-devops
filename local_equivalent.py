@@ -126,7 +126,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
         conan_build_profile = 'macos-xcode12-x86_64-release'
     if platform == 'macos11_xcode13_arm':
         conan_profile = 'macos-xcode13-armv8'
-        conan_build_profile = 'build-on-macos-xcode13-armv8-for-macos-xcode13-armv8'
+        conan_build_profile = 'build-on-macos-xcode13-armv8'
 
     if platform == 'win2019_vs2019':
         conan_profile = 'windows-msvc16-amd64'
