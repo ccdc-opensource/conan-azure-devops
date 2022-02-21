@@ -40,8 +40,11 @@ conan_env['CONAN_PASSWORD'] = artifactory_api_key
 original_path = os.environ['PATH']
 if '/opt/homebrew/bin' in original_path:
     conan_env['PATH'] = original_path.replace('/opt/homebrew/bin', '/opt/homebrew/opt/cmake/bin')
-if '/usr/local/bin' in original_path:
+if '/usr/local/bin' in original_path and os.path.exists('/usr/local/opt/cmake/bin'):
     conan_env['PATH'] = original_path.replace('/usr/local/bin', '/usr/local/opt/cmake/bin')
+
+if 'LD_LIBRARY_PATH' and '/opt/rh/rh-git29' in conan_env['PATH'] and '/opt/rh/httpd24/root/' not in conan_env['LD_LIBRARY_PATH']:
+    conan_env['LD_LIBRARY_PATH']=conan_env['LD_LIBRARY_PATH']+':/opt/rh/httpd24/root/usr/lib64'
 
 def run_command(args):
     print(f'Running {" ".join(args)}')
@@ -107,16 +110,16 @@ def build_conan_package(package, package_version, local_recipe, platform,
 
     if platform == 'centos7_gcc10':
         conan_profile = 'centos7-gcc10-x86_64'
-        conan_build_profile = 'centos7-gcc10-x86_64-release'
-        docker_container = 'rockdreamer/centos7-gcc10:latest'
+        conan_build_profile = 'build-on-centos7-gcc10-x86_64'
+        # docker_container = 'rockdreamer/centos7-gcc10:latest'
     if platform == 'ubuntu2004_gcc10':
         conan_profile = 'ubuntu20-gcc10-x86_64'
         conan_build_profile = 'ubuntu20-gcc10-x86_64-release'
-        docker_container = 'rockdreamer/ubuntu20-gcc10:latest'
+        # docker_container = 'rockdreamer/ubuntu20-gcc10:latest'
     if platform == 'debian_bullseye_gcc10_armv7hf':
         conan_profile = 'bullseye-gcc10-armv7hf'
         conan_build_profile = 'bullseye-gcc10-armv7hf-release'
-        docker_container = 'rockdreamer/bullseye-gcc10:latest'
+        # docker_container = 'rockdreamer/bullseye-gcc10:latest'
 
     if platform == 'macos1015_xcode11':
         conan_profile = 'macos-xcode11-x86_64'
