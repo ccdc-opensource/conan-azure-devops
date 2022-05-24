@@ -35,6 +35,9 @@ parameters:
   - name: use_release_zlib_profile
     type: boolean
     default: false
+  - name: additional_profiles_for_all_platforms
+    type: string
+    default: ''
 
 steps:
 - script: ${{ parameters.python }} -m pip install --upgrade conan
@@ -126,14 +129,26 @@ steps:
       scriptSource: 'inline'
       pythonInterpreter: ${{ parameters.python }}
       script: |
-        use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
         profile = '${{ parameters.profile }}'
+        print(f'profile={profile}')
+
         build_type = '${{ build_type }}'
-        additional_profiles = []
+        print(f'build_type={build_type}')
+
+        use_release_zlib_profile = ${{ parameters.use_release_zlib_profile }}
+        print(f'use_release_zlib_profile={use_release_zlib_profile}')
+
+        additional_profiles_for_all_platforms = '${{ parameters.additional_profiles_for_all_platforms }}'
+        print(f'additional_profiles_for_all_platforms={additional_profiles_for_all_platforms}')
+        if additional_profiles_for_all_platforms:
+          additional_profiles = additional_profiles_for_all_platforms.split(',')
+        else:
+          additional_profiles = []
 
         if use_release_zlib_profile:
           if 'msvc16' in profile:
             additional_profiles.append('windows-msvc16-release-zlib')
+        print(f'additional_profiles={additional_profiles}')
 
         value = ' '.join([f'--profile {p}' for p in additional_profiles])
         print(f'##vso[task.setvariable variable=additional_profiles;]{value}')

@@ -57,7 +57,9 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         conan_logging_level='info',
                         workaround_autotools_windows_debug_issue=False,
                         use_release_zlib_profile=False,
+                        additional_profiles_for_all_platforms=[],
                         really_upload=False,
+                        require_overrides=[]
                         ):
 
     # conan_env['CONAN_LOGGING_LEVEL']='critical'
@@ -138,6 +140,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
 
     for build_type in build_types:
         additional_profiles = []
+        additional_profiles.extend(additional_profiles_for_all_platforms)
         if use_release_zlib_profile:
             if 'msvc16' in conan_profile:
                 additional_profiles.append('windows-msvc16-release-zlib')
@@ -158,6 +161,8 @@ def build_conan_package(package, package_version, local_recipe, platform,
             '-s',
             f'build_type={ build_type }',
         ]
+        for override in require_overrides:
+            conan_install_args += ['--require-override', override]
         run_conan(conan_install_args)
 
         if local_recipe:
@@ -215,10 +220,14 @@ def main():
         '--workaround-autotools-windows-debug-issue', help='', action='store_true')
     parser.add_argument('--use-release-zlib-profile',
                         help='', action='store_true')
+    parser.add_argument('--additional-profiles-for-all-platforms',
+                        help='Use additional profiles', action='append')
     parser.add_argument(
         '--local-recipe', help='directory that contains conanfile.py')
     parser.add_argument(
         '--really-upload', help='really upload to artifactory', action='store_true')
+    parser.add_argument('--require-override',
+                        help='override requirements for specific package', action='append')
     args = parser.parse_args()
     if not args.build_types:
         build_types = ['Release', 'Debug', 'RelWithDebInfo']
@@ -232,6 +241,14 @@ def main():
         centos_yum_preinstall = []
     else:
         centos_yum_preinstall = list(args.centos_yum_preinstall)
+    if not args.additional_profiles_for_all_platforms:
+        additional_profiles_for_all_platforms = []
+    else:
+        additional_profiles_for_all_platforms = list(args.additional_profiles_for_all_platforms)
+    if not args.require_override:
+        require_overrides = []
+    else:
+        require_overrides = list(args.require_override)
     try:
         build_conan_package(
             package=args.package,
@@ -249,7 +266,9 @@ def main():
             conan_logging_level=args.conan_logging_level,
             workaround_autotools_windows_debug_issue=args.workaround_autotools_windows_debug_issue,
             use_release_zlib_profile=args.use_release_zlib_profile,
+            additional_profiles_for_all_platforms=additional_profiles_for_all_platforms,
             really_upload=args.really_upload,
+            require_overrides=require_overrides
         )
     except subprocess.CalledProcessError as e:
         print(f'Last command output was {e.output.decode(errors="replace")}')
