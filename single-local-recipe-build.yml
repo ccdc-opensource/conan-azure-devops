@@ -40,7 +40,7 @@ parameters:
     default: ''
 
 steps:
-- script: ${{ parameters.python }} -m pip install --upgrade conan
+- script: ${{ parameters.python }} -m pip install conan==1.59.0
   displayName: 'Install conan'
 
 # This hack is required to get some packages to build. Particularly the ones that
