@@ -175,7 +175,7 @@ jobs:
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
-          profile: macos-xcode14.2-x86_64
+          profile: macos-xcode14.2-armv8
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
@@ -210,7 +210,7 @@ jobs:
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           artifactory_api_key: ${{ parameters.artifactory_api_key }}
-          profile: macos-xcode14.3-x86_64
+          profile: macos-xcode14.3-armv8
           build_types: ${{ parameters.build_types }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
