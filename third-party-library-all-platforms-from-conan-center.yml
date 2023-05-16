@@ -158,7 +158,7 @@ jobs:
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
   - job: macos1015_xcode11
     pool:
-      vmImage: "macOS-10.15"
+      vmImage: "macOS-latest"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -193,7 +193,7 @@ jobs:
 - ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
   - job: macos1015_xcode12
     pool:
-      vmImage: "macOS-10.15"
+      vmImage: "macOS-latest"
     steps:
       - task: UsePythonVersion@0
         inputs:

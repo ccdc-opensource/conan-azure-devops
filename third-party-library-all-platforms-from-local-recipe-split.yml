@@ -96,7 +96,7 @@ jobs:
             conan_logging_level: ${{ parameters.conan_logging_level }}
             artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
             use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
+            additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
 - ${{ if containsValue(parameters.platforms, 'centos7_gcc10') }}:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
@@ -159,7 +159,7 @@ jobs:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
     - job: macos1015_xcode11_${{ build_type }}
       pool:
-        vmImage: "macOS-10.15"
+        vmImage: "macOS-latest"
       steps:
         - task: UsePythonVersion@0
           inputs:
@@ -196,7 +196,7 @@ jobs:
   - ${{ each build_type in parameters.build_types }}: # Each build_type
     - job: macos1015_xcode12_${{ build_type }}
       pool:
-        vmImage: "macOS-10.15"
+        vmImage: "macOS-latest"
       steps:
         - task: UsePythonVersion@0
           inputs:
