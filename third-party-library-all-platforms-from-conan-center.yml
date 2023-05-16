@@ -27,8 +27,8 @@ parameters:
       - centos7_gcc9
       - centos7_gcc10
       - ubuntu2004_gcc10
-      - macos1015_xcode11
-      - macos1015_xcode12
+      - macos12_xcode14_2
+      - macos13_xcode14_3
       - win2019_vs2019
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_brew_preinstall
@@ -39,13 +39,13 @@ parameters:
     default: []
   - name: macos_deployment_target
     type: string
-    default: '10.13'
-  - name: macos_xcode_version
+    default: '12.6.5'
+  - name: macos12_xcode_version
     type: string
-    default: '11.7'
-  - name: macos_xcode12_version
+    default: '14.2'
+  - name: macos13_xcode_version
     type: string
-    default: '12.4'
+    default: '14.3'
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
@@ -155,10 +155,10 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
-  - job: macos1015_xcode11
+- ${{ if containsValue(parameters.platforms, 'macos12_xcode14_2') }}:
+  - job: macos12_xcode14_2
     pool:
-      vmImage: "macOS-latest"
+      vmImage: "macOS-12"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -171,8 +171,8 @@ jobs:
           displayName: "Brew install ${{ preinstall_pkg }}"
       - task: CmdLine@2
         inputs:
-          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode_version }}.app/Contents/Developer"
-        displayName: "Select XCode ${{ parameters.macos_xcode_version }}"
+          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos12_xcode_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ parameters.macos12_xcode_version }}"
       - template: single-build.yml@templates
         parameters:
           python: 'python'
@@ -180,7 +180,7 @@ jobs:
           package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
-          profile: macos-xcode11-x86_64
+          profile: macos-xcode14.2-x86_64
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
@@ -190,10 +190,10 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
-  - job: macos1015_xcode12
+- ${{ if containsValue(parameters.platforms, 'macos13_xcode14_3') }}:
+  - job: macos13_xcode14_3
     pool:
-      vmImage: "macOS-latest"
+      vmImage: "macOS-13"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -206,8 +206,8 @@ jobs:
           displayName: "Brew install ${{ preinstall_pkg }}"
       - task: CmdLine@2
         inputs:
-          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode12_version }}.app/Contents/Developer"
-        displayName: "Select XCode ${{ parameters.macos_xcode12_version }}"
+          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos13_xcode_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ parameters.macos13_xcode_version }}"
       - template: single-build.yml@templates
         parameters:
           python: 'python'
@@ -215,7 +215,7 @@ jobs:
           package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
-          profile: macos-xcode12-x86_64
+          profile: macos-xcode14.3-x86_64
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
