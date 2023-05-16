@@ -153,6 +153,11 @@ steps:
         value = ' '.join([f'--profile {p}' for p in additional_profiles])
         print(f'##vso[task.setvariable variable=additional_profiles;]{value}')
 
+  - script: |
+      echo List Conan Profiles:
+      ls ~/.conan/profiles
+    displayName: 'List Conan Profiles'
+
   - task: ArtifactoryConan@1
     displayName: 'Build ${{ parameters.package }} in ${{ build_type }} mode'
     inputs:
