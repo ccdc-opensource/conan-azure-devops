@@ -27,13 +27,13 @@ parameters:
       - centos7_gcc9
       - centos7_gcc10
       - ubuntu2004_gcc10
-      - macos11_1_xcode12
-      - macos11_3_xcode13
+      - macos11_xcode12
+      - macos11_xcode13
       - win2019_vs2019
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_deployment_target
     type: string
-    default: '11.1'
+    default: '11'
   - name: macos_brew_preinstall
     type: object
     default: []
@@ -149,10 +149,10 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos11_1_xcode12') }}:
-  - job: macos11_1_xcode12
+- ${{ if containsValue(parameters.platforms, 'macos11_xcode12') }}:
+  - job: macos11_xcode12
     pool:
-      vmImage: "macOS-11.1"
+      vmImage: "macOS-11"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -184,10 +184,10 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos11_3_xcode13') }}:
-  - job: macos11_3_xcode13
+- ${{ if containsValue(parameters.platforms, 'macos11_xcode13') }}:
+  - job: macos11_xcode13
     pool:
-      vmImage: "macOS-11.3"
+      vmImage: "macOS-11"
     steps:
       - task: UsePythonVersion@0
         inputs:
