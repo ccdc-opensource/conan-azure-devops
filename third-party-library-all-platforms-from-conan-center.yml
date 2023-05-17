@@ -27,8 +27,8 @@ parameters:
       - centos7_gcc9
       - centos7_gcc10
       - ubuntu2004_gcc10
-      - macos1015_xcode11
-      - macos1015_xcode12
+      - macos11_1_xcode12
+      - macos11_3_xcode13
       - win2019_vs2019
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_brew_preinstall
@@ -39,13 +39,13 @@ parameters:
     default: []
   - name: macos_deployment_target
     type: string
-    default: '10.13'
-  - name: macos_xcode_version
-    type: string
-    default: '11.7'
+    default: '11.1'
   - name: macos_xcode12_version
     type: string
     default: '12.4'
+  - name: macos_xcode13_version
+    type: string
+    default: '13.0'
   - name: windows_bash_path
     type: string
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
@@ -155,45 +155,10 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos1015_xcode11') }}:
-  - job: macos1015_xcode11
+- ${{ if containsValue(parameters.platforms, 'macos11_1_xcode12') }}:
+  - job: macos11_1_xcode12
     pool:
-      vmImage: "macOS-10.15"
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: "3.8"
-        displayName: "Use latest python 3.8"
-      - ${{ each preinstall_pkg in parameters.macos_brew_preinstall }}: # package
-        - task: CmdLine@2
-          inputs:
-            script: "brew install ${{ preinstall_pkg }}"
-          displayName: "Brew install ${{ preinstall_pkg }}"
-      - task: CmdLine@2
-        inputs:
-          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode_version }}.app/Contents/Developer"
-        displayName: "Select XCode ${{ parameters.macos_xcode_version }}"
-      - template: single-build.yml@templates
-        parameters:
-          python: 'python'
-          package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
-          user: ${{ parameters.user }}
-          channel: ${{ parameters.channel }}
-          profile: macos-xcode11-x86_64
-          build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
-          destination_repository: ${{ parameters.destination_repository }}
-          macos_deployment_target: ${{ parameters.macos_deployment_target }}
-          conan_logging_level: ${{ parameters.conan_logging_level }}
-          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
-          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
-          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
-
-- ${{ if containsValue(parameters.platforms, 'macos1015_xcode12') }}:
-  - job: macos1015_xcode12
-    pool:
-      vmImage: "macOS-10.15"
+      vmImage: "macOS-11.1"
     steps:
       - task: UsePythonVersion@0
         inputs:
@@ -216,6 +181,41 @@ jobs:
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
           profile: macos-xcode12-x86_64
+          build_types: ${{ parameters.build_types }}
+          source_repository: ${{ parameters.source_repository }}
+          destination_repository: ${{ parameters.destination_repository }}
+          macos_deployment_target: ${{ parameters.macos_deployment_target }}
+          conan_logging_level: ${{ parameters.conan_logging_level }}
+          artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
+          use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
+          additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
+
+- ${{ if containsValue(parameters.platforms, 'macos11_3_xcode13') }}:
+  - job: macos11_3_xcode13
+    pool:
+      vmImage: "macOS-11.3"
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.8"
+        displayName: "Use latest python 3.8"
+      - ${{ each preinstall_pkg in parameters.macos_brew_preinstall }}: # package
+        - task: CmdLine@2
+          inputs:
+            script: "brew install ${{ preinstall_pkg }}"
+          displayName: "Brew install ${{ preinstall_pkg }}"
+      - task: CmdLine@2
+        inputs:
+          script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode13_version }}.app/Contents/Developer"
+        displayName: "Select XCode ${{ parameters.macos_xcode13_version }}"
+      - template: single-build.yml@templates
+        parameters:
+          python: 'python'
+          package: ${{ parameters.package }}
+          package_version: ${{ variables.package_version }}
+          user: ${{ parameters.user }}
+          channel: ${{ parameters.channel }}
+          profile: macos-xcode13-x86_64
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
