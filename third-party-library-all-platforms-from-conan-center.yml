@@ -180,7 +180,7 @@ jobs:
           package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
-          profile: macos-xcode14.2-armv8
+          profile: macos-xcode14-x86_64
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
@@ -215,7 +215,7 @@ jobs:
           package_version: ${{ variables.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
-          profile: macos-xcode14.3-armv8
+          profile: macos-xcode14-armv8
           build_types: ${{ parameters.build_types }}
           source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
