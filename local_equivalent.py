@@ -134,7 +134,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
     run_conan([
         'config',
         'install',
-        f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config-new.zip'
+        f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config.zip'
     ])
 
     if local_recipe:

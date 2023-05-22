@@ -69,7 +69,7 @@ steps:
       {
         "files": [
           {
-            "pattern": "ccdc-conan-metadata/common-3rdparty-config-new.zip",
+            "pattern": "ccdc-conan-metadata/common-3rdparty-config.zip",
             "target": "$(Pipeline.Workspace)/.conan/"
           }
         ]
@@ -81,7 +81,7 @@ steps:
   inputs:
     conanCommand: 'Config Install'
     configSourceType: 'zip'
-    configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config-new.zip'
+    configZipPath: '$(Pipeline.Workspace)/.conan/common-3rdparty-config.zip'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
   env:
     CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
