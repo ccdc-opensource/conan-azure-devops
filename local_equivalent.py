@@ -105,12 +105,26 @@ def build_conan_package(package, package_version, local_recipe, platform,
         conan_profile = 'ubuntu20-gcc10-x86_64'
         docker_container = 'rockdreamer/ubuntu20-gcc10:latest'
 
-    if platform == 'macos1015_xcode11':
-        conan_profile = 'macos-xcode11-x86_64'
-    if platform == 'macos1015_xcode12':
+    if platform == 'macos11_xcode12':
         conan_profile = 'macos-xcode12-x86_64'
     if platform == 'macos11_xcode12_arm':
         conan_profile = 'macos-xcode12-armv8'
+    if platform == 'macos11_xcode13':
+        conan_profile = 'macos-xcode13-x86_64'
+    if platform == 'macos11_xcode13_arm':
+        conan_profile = 'macos-xcode13-armv8'
+    if platform == 'macos12_xcode13':
+        conan_profile = 'macos-xcode13-x86_64'
+    if platform == 'macos12_xcode13_arm':
+        conan_profile = 'macos-xcode13-armv8'
+    if platform == 'macos12_xcode14':
+        conan_profile = 'macos-xcode14-x86_64'
+    if platform == 'macos12_xcode14_arm':
+        conan_profile = 'macos-xcode14-armv8'
+    if platform == 'macos13_xcode14':
+        conan_profile = 'macos-xcode14-x86_64'
+    if platform == 'macos13_xcode14_arm':
+        conan_profile = 'macos-xcode14-armv8'
 
     if platform == 'win2019_vs2019':
         conan_profile = 'windows-msvc16-amd64'
@@ -120,7 +134,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
     run_conan([
         'config',
         'install',
-        f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config.zip'
+        f'https://{artifactory_user}:{artifactory_api_key}@artifactory.ccdc.cam.ac.uk/artifactory/ccdc-conan-metadata/common-3rdparty-config-new.zip'
     ])
 
     if local_recipe:
