@@ -208,16 +208,16 @@ jobs:
         inputs:
           script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode13_version }}.app/Contents/Developer"
         displayName: "Select XCode ${{ parameters.macos_xcode13_version }}"
-      - template: single-build.yml@templates
+      - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
+          package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode13-x86_64
           build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
@@ -243,22 +243,23 @@ jobs:
         inputs:
           script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode13_version }}.app/Contents/Developer"
         displayName: "Select XCode ${{ parameters.macos_xcode13_version }}"
-      - template: single-build.yml@templates
+      - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
+          package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode13-x86_64
           build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
           artifactory_service_connection: ${{ parameters.artifactory_service_connection }}
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
+
 
 - ${{ if containsValue(parameters.platforms, 'macos12_xcode14') }}:
   - job: macos12_xcode14
@@ -278,16 +279,16 @@ jobs:
         inputs:
           script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode14_version }}.app/Contents/Developer"
         displayName: "Select XCode ${{ parameters.macos_xcode14_version }}"
-      - template: single-build.yml@templates
+      - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
+          package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode14-x86_64
           build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
@@ -295,7 +296,7 @@ jobs:
           use_release_zlib_profile: ${{ parameters.use_release_zlib_profile }}
           additional_profiles_for_all_platforms: ${{ parameters.additional_profiles_for_all_platforms }}
 
-- ${{ if containsValue(parameters.platforms, 'macos13_xcode14') }}:
+- ${{ if containsValue(parameters.platforms, 'macos12_xcode14') }}:
   - job: macos13_xcode14
     pool:
       vmImage: "macOS-13"
@@ -313,16 +314,16 @@ jobs:
         inputs:
           script: "sudo xcode-select -s /Applications/Xcode_${{ parameters.macos_xcode14_version }}.app/Contents/Developer"
         displayName: "Select XCode ${{ parameters.macos_xcode14_version }}"
-      - template: single-build.yml@templates
+      - template: single-local-recipe-build.yml@templates
         parameters:
           python: 'python'
           package: ${{ parameters.package }}
-          package_version: ${{ variables.package_version }}
+          package_version: ${{ parameters.package_version }}
           user: ${{ parameters.user }}
           channel: ${{ parameters.channel }}
+          artifactory_api_key: ${{ parameters.artifactory_api_key }}
           profile: macos-xcode14-x86_64
           build_types: ${{ parameters.build_types }}
-          source_repository: ${{ parameters.source_repository }}
           destination_repository: ${{ parameters.destination_repository }}
           macos_deployment_target: ${{ parameters.macos_deployment_target }}
           conan_logging_level: ${{ parameters.conan_logging_level }}
