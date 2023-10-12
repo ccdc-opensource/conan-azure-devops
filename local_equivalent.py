@@ -10,8 +10,8 @@ all_platforms = [
     'centos7_gcc10',
     'ubuntu2004_gcc10',
     'debian_bullseye_gcc10_armv7hf',
-    'macos1015_xcode11',
-    'macos1015_xcode12',
+    'macos11_xcode12',
+    'macos12_xcode13',
     'macos11_xcode13_arm',
     'win2019_vs2019',
     'win2019_msys',  # (this is used for building a few buildtools)
@@ -62,7 +62,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         destination_repository='ccdc-3rdparty-conan',
                         macos_brew_preinstall=[],
                         centos_yum_preinstall=[],
-                        macos_deployment_target='10.13',
+                        macos_deployment_target='11',
                         macos_xcode_version=None,
                         windows_bash_path=None,
                         conan_logging_level='info',
@@ -121,12 +121,12 @@ def build_conan_package(package, package_version, local_recipe, platform,
         conan_build_profile = 'bullseye-gcc10-armv7hf-release'
         # docker_container = 'rockdreamer/bullseye-gcc10:latest'
 
-    if platform == 'macos1015_xcode11':
-        conan_profile = 'macos-xcode11-x86_64'
-        conan_build_profile = 'macos-xcode11-x86_64-release'
-    if platform == 'macos1015_xcode12':
+    if platform == 'macos11_xcode12':
         conan_profile = 'macos-xcode12-x86_64'
         conan_build_profile = 'macos-xcode12-x86_64-release'
+    if platform == 'macos12_xcode13':
+        conan_profile = 'macos-xcode13-x86_64'
+        conan_build_profile = 'macos-xcode13-x86_64-release'
     if platform == 'macos11_xcode13_arm':
         conan_profile = 'macos-xcode13-armv8'
         conan_build_profile = 'build-on-macos-xcode13-armv8'
@@ -243,7 +243,7 @@ def main():
     parser.add_argument('--centos-yum-preinstall',
                         help='install yum packages', action='append')
     parser.add_argument('--macos-deployment-target',
-                        help='minimum supported macos version', default='10.13')
+                        help='minimum supported macos version', default='11')
     parser.add_argument('--macos-xcode-version',
                         help='xcode version')
     parser.add_argument('--windows-bash-path',
