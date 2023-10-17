@@ -32,7 +32,7 @@ parameters:
       # - win2019_msys (this is used for building a few buildtools)
   - name: macos_deployment_target
     type: string
-    default: '11'
+    default: '10.15'
   - name: macos_brew_preinstall
     type: object
     default: []
