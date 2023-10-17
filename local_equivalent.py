@@ -62,7 +62,7 @@ def build_conan_package(package, package_version, local_recipe, platform,
                         destination_repository='ccdc-3rdparty-conan',
                         macos_brew_preinstall=[],
                         centos_yum_preinstall=[],
-                        macos_deployment_target='10.15',
+                        macos_deployment_target='10.14',
                         macos_xcode_version=None,
                         windows_bash_path=None,
                         conan_logging_level='info',
@@ -243,7 +243,7 @@ def main():
     parser.add_argument('--centos-yum-preinstall',
                         help='install yum packages', action='append')
     parser.add_argument('--macos-deployment-target',
-                        help='minimum supported macos version', default='10.15')
+                        help='minimum supported macos version', default='10.14')
     parser.add_argument('--macos-xcode-version',
                         help='xcode version')
     parser.add_argument('--windows-bash-path',

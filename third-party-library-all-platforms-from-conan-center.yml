@@ -38,7 +38,7 @@ parameters:
     default: []
   - name: macos_deployment_target
     type: string
-    default: '10.15'
+    default: '10.14'
   - name: macos_xcode12_version
     type: string
     default: '12.4'
