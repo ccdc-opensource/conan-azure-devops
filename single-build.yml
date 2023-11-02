@@ -40,8 +40,8 @@ parameters:
     default: ''
 
 steps:
-- script: ${{ parameters.python }} -m pip install conan==1.61.0
-  displayName: 'Install conan'
+    #- script: ${{ parameters.python }} -m pip install conan==1.61.0
+    #displayName: 'Install conan'
 
 # This hack is required to get some packages to build. Particularly the ones that
 # require use of the msys2 package in a specific configurations. Microsoft hosted agents
