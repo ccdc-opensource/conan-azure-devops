@@ -42,12 +42,11 @@ parameters:
 steps:
 - script: |
     ${{ parameters.python }} -m pip install conan==1.61.0
+    echo $(PATH)
     conan --version
   displayName: 'Install conan'
 
 - bash: |
-    echo $(PATH)
-    which conan
     conan --version
   displayName: 'Check conan'
 
@@ -65,6 +64,14 @@ steps:
       print(f'##vso[task.setvariable variable=path_without_git_bash;]{path_without_git_bash}')
       print('Path without git paths:')
       for pi in path_without_git_bash.split(os.pathsep):
+          print(f'  - {pi}')
+
+      import os
+      path_with_conan = os.pathsep.join([ x for x in os.environ['PATH'].split(os.pathsep) if 'python' in x])
+      path_with_conan += (os.pathsep + os.environ['PATH'])
+      print(f'##vso[task.setvariable variable=path_with_conan;]{path_with_conan}')
+      print('Path with conan:')
+      for pi in path_with_conan.split(os.pathsep):
           print(f'  - {pi}')
 
 
@@ -128,6 +135,7 @@ steps:
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
   env:
+    PATH: '$(path_with_conan)'
     CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
