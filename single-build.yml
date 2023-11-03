@@ -45,6 +45,12 @@ steps:
     conan --version
   displayName: 'Install conan'
 
+- bash: |
+    echo $(PATH)
+    which conan
+    conan --version
+  displayName: 'Check conan'
+
 # This hack is required to get some packages to build. Particularly the ones that
 # require use of the msys2 package in a specific configurations. Microsoft hosted agents
 # insert git paths that contain bash executables, which interfere with the process.
