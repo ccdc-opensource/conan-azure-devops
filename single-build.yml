@@ -41,10 +41,15 @@ parameters:
 
 steps:
 - script: |
-    sudo ${{ parameters.python }} -m pip uninstall conan -y
-    sudo ${{ parameters.python }} -m pip install conan==1.61.0 -v
-    echo $(PATH)
-    conan --version
+    ${{ if contains(parameters.profile, 'macos') }}:
+      ${{ parameters.python }} -m pip install conan==1.61.0
+    ${{ if contains(parameters.profile, 'windows') }}:
+      ${{ parameters.python }} -m pip install conan==1.61.0
+    ${{ if contains(parameters.profile, 'ubuntu') }}:
+      ${{ parameters.python }} -m pip install conan==1.61.0
+    ${{ if contains(parameters.profile, 'centos') }}:
+      sudo ${{ parameters.python }} -m pip uninstall conan
+      sudo ${{ parameters.python }} -m pip install conan==1.61.0
   displayName: 'Install conan'
 
 - bash: |
