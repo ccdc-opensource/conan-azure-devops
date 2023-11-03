@@ -78,6 +78,7 @@ jobs:
       vmImage: "ubuntu-latest"
     # We use a container to run the build as we must be compatible with centos7's older glibc
     container: rockdreamer/centos7-gcc10:latest
+    options: --user root
     steps:
       # No need to setup specific python, the container's python3 will be used
       - ${{ each preinstall_pkg in parameters.centos_yum_preinstall }}: # package
