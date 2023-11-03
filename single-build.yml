@@ -41,8 +41,7 @@ parameters:
 
 steps:
 - script: |
-    ${{ parameters.python }} -m pip uninstall conan
-    ${{ parameters.python }} -m pip install conan==1.61.0
+    ${{ parameters.python }} -m pip install conan==1.61.0 --upgrade
     echo $(PATH)
     conan --version
   displayName: 'Install conan'
