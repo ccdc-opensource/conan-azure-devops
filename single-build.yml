@@ -40,16 +40,15 @@ parameters:
     default: ''
 
 steps:
-- script: |
-    ${{ if contains(parameters.profile, 'macos') }}:
-      ${{ parameters.python }} -m pip install conan==1.61.0
-    ${{ if contains(parameters.profile, 'windows') }}:
-      ${{ parameters.python }} -m pip install conan==1.61.0
-    ${{ if contains(parameters.profile, 'ubuntu') }}:
-      ${{ parameters.python }} -m pip install conan==1.61.0
-    ${{ if contains(parameters.profile, 'centos') }}:
-      sudo ${{ parameters.python }} -m pip uninstall conan
+- bash: |
+    which bash
+    echo ${{ parameters.profile }}
+    if [[ ${{ parameters.profile }} == centos7* ]]; then
+      sudo ${{ parameters.python }} -m pip uninstall conan -y
       sudo ${{ parameters.python }} -m pip install conan==1.61.0
+    else
+      ${{ parameters.python }} -m pip install conan==1.61.0
+    fi
   displayName: 'Install conan'
 
 - bash: |
