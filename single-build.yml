@@ -49,11 +49,8 @@ steps:
     else
       ${{ parameters.python }} -m pip install conan==1.61.0
     fi
-  displayName: 'Install conan'
-
-- bash: |
     conan --version
-  displayName: 'Check conan'
+  displayName: 'Install conan'
 
 # This hack is required to get some packages to build. Particularly the ones that
 # require use of the msys2 package in a specific configurations. Microsoft hosted agents
@@ -70,15 +67,6 @@ steps:
       print('Path without git paths:')
       for pi in path_without_git_bash.split(os.pathsep):
           print(f'  - {pi}')
-
-      import os
-      path_with_conan = os.pathsep.join([ x for x in os.environ['PATH'].split(os.pathsep) if 'python' in x])
-      path_with_conan += (os.pathsep + os.environ['PATH'])
-      print(f'##vso[task.setvariable variable=path_with_conan;]{path_with_conan}')
-      print('Path with conan:')
-      for pi in path_with_conan.split(os.pathsep):
-          print(f'  - {pi}')
-
 
 - task: ArtifactoryGenericDownload@3
   displayName: 'Download configuration'
@@ -140,7 +128,6 @@ steps:
     buildNumber: '$(Build.BuildNumber)'
     conanUserHome: '$(Pipeline.Workspace)/.conan'
   env:
-    PATH: '$(path_with_conan)'
     CONAN_LOGGING_LEVEL: ${{ parameters.conan_logging_level }}
 
 - ${{ each build_type in parameters.build_types }}: # Each build_type
