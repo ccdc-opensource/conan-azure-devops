@@ -50,7 +50,7 @@ parameters:
     default: 'NOT VALID UNLESS SET, ONLY USED BY WINDOWS BUILDS'
   - name: conan_logging_level
     type: string
-    default: 'critical'
+    default: 'debug'
   # see https://github.com/conan-io/conan/issues/6514
   - name: workaround_autotools_windows_debug_issue
     type: boolean
